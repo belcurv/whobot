@@ -4,8 +4,11 @@
 
 module.exports = function (req, res, next) {
     var userName = req.body.user_name,
+        postText = req.body.text,
+        
+        // our response
         botPayload = {
-            text: 'Hello, ' + userName + '!'
+            text: 'Hello, ' + userName + '! You wrote: "' + postText + '".'
         };
     
     // avoid infinite loop
