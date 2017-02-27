@@ -8,7 +8,7 @@ module.exports = function (req, res, next) {
         
         // our response
         botPayload = {
-            text: 'Hello, ' + userName + '! You wrote: "' + postText + '".'
+            text: 'Hello, @' + userName + '! You wrote: "' + postText + '".'
         };
     
     // avoid infinite loop
