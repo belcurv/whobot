@@ -5,6 +5,7 @@
 /* ================================= SETUP ================================= */
 var express    = require('express'),
     bodyParser = require('body-parser'),
+    whobot     = require('./bin/whobot'),
     app        = express(),
     port       = process.env.PORT || 3000;
 
@@ -28,6 +29,9 @@ app.get('/', function (req, res) {
     res.status(200).send('Hello from Whobot!');
 });
 
+
+// testing whobot
+app.post('/whobot', whobot);
 
 
 
