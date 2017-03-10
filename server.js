@@ -1,38 +1,40 @@
-/* server.js */
-
 /* jshint node: true */
 
 /* ================================= SETUP ================================= */
 var express    = require('express'),
-    bodyParser = require('body-parser'),
-    whobot     = require('./bin/whobot'),
     app        = express(),
+    
+    // middleware
+    bodyParser = require('body-parser'),
+    morgan     = require('morgan'),
+    
+    // db
+    config     = require('./config'),
+    mongoose   = require('mongoose'),
+
+    // routes
+    apiRoutes  = require('./routes/routes.js')(app),
+    setupRoute = require('./routes/setup.js')(app),
+    
+    // port assignment
     port       = process.env.PORT || 3000;
+    
+    // deprecated?
+    // whobot     = require('./bin/whobot'),
 
 
 /* ============================== MIDDLEWARE =============================== */
-
-// body parser middleware
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan('dev'));  // logging
 
-// error handler
-app.use(function (err, req, res, next) {
-    console.error(err.stack);
-    res.status(400).send(err.message);
-});
+
+/* ============================= CONNECT TO DB ============================= */
+mongoose.connect(config.getDbConnectionString());
 
 
 /* ================================ ROUTES ================================= */
-
-// test route
-app.get('/', function (req, res) {
-    res.status(200).send('Hello from Whobot!');
-});
-
-
-// testing whobot
-app.post('/whobot', whobot);
-
+//apiRoutes(app);   // API routes
+//setupRoute(app);  // seed database with dummy profiles
 
 
 /* ============================= START SERVER ============================== */
