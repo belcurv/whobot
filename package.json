@@ -1,16 +1,18 @@
 {
-    "name": "whobot",
-    "version": "1.0.0",
-    "description": "",
-    "main": "server.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "keywords": [],
-    "author": "belcurv",
-    "license": "MIT",
-    "dependencies": {
-        "express": "^4.x.x",
-        "body-parser": "^1.x.x"
-    }
+  "name": "whobot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "belcurv",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.x.x",
+    "express": "^4.x.x",
+    "mongoose": "^4.8.6",
+    "morgan": "^1.8.1"
+  }
 }
