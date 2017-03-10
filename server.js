@@ -32,11 +32,6 @@ app.use(morgan('dev'));  // logging
 mongoose.connect(config.getDbConnectionString());
 
 
-/* ================================ ROUTES ================================= */
-//apiRoutes(app);   // API routes
-//setupRoute(app);  // seed database with dummy profiles
-
-
 /* ============================= START SERVER ============================== */
 app.listen(port, function () {
     console.log('Whobot listening on port: ' + port);
