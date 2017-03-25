@@ -24,7 +24,6 @@ var express    = require('express'),
 
 
 /* ============================== MIDDLEWARE =============================== */
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));  // logging
 
 
