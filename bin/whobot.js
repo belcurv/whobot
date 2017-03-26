@@ -17,19 +17,14 @@ module.exports = function (req, res, next) {
     function textCategory(text) {
         
         switch(text) {
-            //case '/whois':
+                
             case 'who is':
                 return 'get';
                 
-            // case '/whobot-tags/':
-            // case '/tags/':
-            // case '/my-attrs/':
             case 'I know':
                 return 'post';
-                
-            // case 'purgeme':
-            // case '/purgeme':
-            case 'purge me':
+
+            case 'forget me':
                 return 'delete';
                 
             default:
@@ -41,12 +36,20 @@ module.exports = function (req, res, next) {
     /* ======================== response generators ======================== */
     
     function helpResponse(you) {
-        return [
-            `Hi @${you}, I'm *Whobot*. I respond to the following commands:`,
-            `\`/whobot who is @user_name}\` = fetch details for @user_name`,
-            `\`/whobot I know skill1 skill2 skill3 etc\` = tell Whobot what you know`,
-            `\`/whobot purge me\` = tell Whobot to forget about you`
-        ].join('\n');
+        
+        return `Hi @${you}, I'm *Whobot*. I respond to the following commands:
+                \`\`\`
+                /whobot who is @user_name // fetch details for @user_name
+                /whobot I know skill_1 skill_2 skill_3 // tell Whobot what you know
+                /whobot forget me // tell Whobot to forget about you
+                \`\`\``;
+        
+//        return [
+//            `Hi @${you}, I'm *Whobot*. I respond to the following commands:`,
+//            `\`/whobot who is @user_name}\` = fetch details for @user_name`,
+//            `\`/whobot I know skill1 skill2 skill3 etc\` = tell Whobot what you know`,
+//            `\`/whobot forget me\` = tell Whobot to forget about you`
+//        ].join('\n');
     }
     
     
@@ -56,18 +59,22 @@ module.exports = function (req, res, next) {
     if (userName !== 'slackbot') {
         
         switch(textCategory(postText)) {
+                
             case 'get':
                 // respond with a team member's profile
-                botPayload.text = 'trigger get';
+                botPayload.text = 'respond with a team member\'s profile';
                 break;
+                
             case 'post':
                 // post user's profile to database
-                botPayload.text = 'trigger post';
+                botPayload.text = 'post user\'s profile to database';
                 break;
+                
             case 'delete':
                 // delete user's profile from database
-                botPayload.text = 'trigger delete';
+                botPayload.text = 'delete user\'s profile from database';
                 break;
+                
             default:
                 // respond with help commands
                 botPayload.text = helpResponse(userName);
