@@ -17,17 +17,21 @@ module.exports = function (req, res, next) {
     function textCategory(text) {
         
         switch(text) {
-            case '/whois':
-            case 'whobot who is':
+            //case '/whois':
+            case 'who is':
                 return 'get';
-            case '/whobot-tags/':
-            case '/tags/':
-            case '/my-attrs/':
+                
+            // case '/whobot-tags/':
+            // case '/tags/':
+            // case '/my-attrs/':
+            case 'I know':
                 return 'post';
-            case 'purgeme':
-            case '/purgeme':
-            case 'whobot purge me':
+                
+            // case 'purgeme':
+            // case '/purgeme':
+            case 'purge me':
                 return 'delete';
+                
             default:
                 return 'help';
         }
@@ -38,10 +42,10 @@ module.exports = function (req, res, next) {
     
     function helpResponse(you) {
         return [
-            `Hi ${you}, I'm *Whobot*. I respond to the following keywords:`,
-            `\`whois\` \`/whois\` \`whobot who is\` = fetch a team member's details`,
-            `\`/whobot-tags/\` \`/tags/\` \`/my-attrs/\` = instruct Whobot to remember your details`,
-            `\`purgeme\` \`/purgeme\` \`whobot purge me\` = remove yourself from Whobot's memory`
+            `Hi @${you}, I'm *Whobot*. I respond to the following commands:`,
+            `\`/whobot who is @user_name}\` = fetch details for @user_name`,
+            `\`/whobot I know skill1 skill2 skill3 etc\` = tell Whobot what you know`,
+            `\`/whobot purge me\` = tell Whobot to forget about you`
         ].join('\n');
     }
     
