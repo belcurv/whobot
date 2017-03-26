@@ -38,11 +38,11 @@ module.exports = function (req, res, next) {
     function helpResponse(you) {
         
         return `Hi @${you}, I'm *Whobot*. I respond to the following commands:
-                \`\`\`
-                /whobot who is @user_name               // fetch details for @user_name
-                /whobot I know skill_1 skill_2 skill_3  // tell Whobot what you know
-                /whobot forget me                       // tell Whobot to forget about you
-                \`\`\``;
+\`\`\`
+/whobot who is @user_name                   // fetch details for @user_name
+/whobot I know skill_1, skill_2, skill_3    // give Whobot a list of your skills
+/whobot forget me                           // tell Whobot to forget about you
+\`\`\``;
         
 //        return [
 //            `Hi @${you}, I'm *Whobot*. I respond to the following commands:`,
