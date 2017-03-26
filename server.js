@@ -9,8 +9,8 @@ var express    = require('express'),
     morgan     = require('morgan'),
     
     // db
-    config     = require('./config'),
-    mongoose   = require('mongoose'),
+//    config     = require('./config'),
+//    mongoose   = require('mongoose'),
 
     // port assignment
     port       = process.env.PORT || 3000,
@@ -35,7 +35,7 @@ app.use(function (err, req, res, next) {
 
 
 /* ============================= CONNECT TO DB ============================= */
-mongoose.connect(config.getDbConnectionString());
+//mongoose.connect(config.getDbConnectionString());
 
 
 
