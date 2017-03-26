@@ -36,20 +36,15 @@ module.exports = function (req, res, next) {
     /* ======================== response generators ======================== */
     
     function helpResponse(you) {
-        
-        return `Hi @${you}, I'm *Whobot*. I respond to the following commands:
-\`\`\`
-/whobot who is @user_name                   // fetch details for @user_name
-/whobot I know skill_1, skill_2, skill_3    // give Whobot a list of your skills
-/whobot forget me                           // tell Whobot to forget about you
-\`\`\``;
-        
-//        return [
-//            `Hi @${you}, I'm *Whobot*. I respond to the following commands:`,
-//            `\`/whobot who is @user_name}\` = fetch details for @user_name`,
-//            `\`/whobot I know skill1 skill2 skill3 etc\` = tell Whobot what you know`,
-//            `\`/whobot forget me\` = tell Whobot to forget about you`
-//        ].join('\n');
+                
+        return [
+            `Hi @${you}, I'm *Whobot*. I respond to the following commands:`,
+            `\`\`\``,
+            `/whobot who is @user_name                   // fetch details for @user_name`,
+            `/whobot I know skill_1, skill_2, skill_3    // give Whobot a list of your skills`,
+            `/whobot forget me                           // tell Whobot to forget about you`,
+            `\`\`\``,
+        ].join('\n');
     }
     
     

@@ -1,16 +1,17 @@
 /* jshint node: true */
 
-/* ** is this what we will get ???
+/* https://api.slack.com/slash-commands
 {
-    token=iVRLkKboiMLjuvge8lpkqbxa
+    token=gIkuvaNzQIHg97ATvDxqgjtO
     team_id=T0001
     team_domain=example
     channel_id=C2147483705
     channel_name=test
-    timestamp=1355517523.000005
     user_id=U2147483697
     user_name=Steve
-    text=googlebot: What is the air-speed velocity of an unladen swallow?
+    command=/weather
+    text=94070
+    response_url=https://hooks.slack.com/commands/1234/5678
 }
 */
 
@@ -22,7 +23,7 @@ var mongoose = require('mongoose'),
             'team_domain' : String,
             'channel_id'  : String,
             'channel_name': String,
-            'timestamp'   : String,
+            'timestamp'   : String, // we generate this
             'user_id'     : String,
             'user_name'   : String,
             'attrs'       : String
