@@ -43,7 +43,7 @@ mongoose.connect(config.getDbConnectionString());
 
 // test route
 app.get('/', function (req, res) {
-    res.status(200).send('Hello from WHobot!');
+    res.status(200).send('Hello from Whobot!');
 });
 
 // bot route calls our whobot module
