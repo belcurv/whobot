@@ -1,7 +1,6 @@
 /* jshint node: true */
 
 var bodyParser = require('body-parser'),
-    whobot     = require('../bot/whobot.js'),
     Profiles   = require('../models/profileModel');
 
 
@@ -78,7 +77,6 @@ module.exports = function(app) {
     // API routes
     app.get('/api/profiles', getAllProfiles);
     app.get('/api/profiles/:team/:name', getOneProfile);
-    app.post('/api/profiles', whobot.postNewProfile);
     app.delete('/api/profiles/:team/:name', deleteProfile);
     
 };
