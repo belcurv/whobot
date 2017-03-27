@@ -108,7 +108,7 @@ module.exports = function (req, res, next) {
                 
             default:
                 // respond with help commands
-                botPayload.text = helpResponse(postBody.user_name);
+                return res.status(200).json(postBody.user_name);
         }
 
         // return res.status(200).json(botPayload);
