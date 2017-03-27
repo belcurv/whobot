@@ -69,16 +69,14 @@ module.exports = function (req, res, next) {
     // delete a user profile
     function deleteProfile() {
         
-        console.log(`@${postBody.user_name}`);
-
         var target = {
-            user_name  : `@${postBody.user_name}`,
-            team_domain: postBody.team_domain
+            team_id: postBody.team_id,
+            user_id: postBody.user_id
         };
 
         Profiles.findOneAndRemove(target, function (err) {
             if (err) { throw err; }
-            return res.status(200).send('profile deleted');
+            return res.status(200).send(`${postBody.user_name}'s profile has been deleted`);
         });
 
     }
