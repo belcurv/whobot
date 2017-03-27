@@ -49,7 +49,7 @@ module.exports = function (req, res, next) {
 
         Profiles.findOne(target, function (err, profile) {
             if (err) { throw err; }
-            return res.status(200).json(profile);
+            return res.status(200).send(profile);
         });
 
     }
@@ -61,7 +61,7 @@ module.exports = function (req, res, next) {
         Profiles(postBody)
             .save(function (err) {
                 if (err) { throw err; }
-                return res.status(200).json('Success - new profile saved');
+                return res.status(200).send('Success - new profile saved');
             });
     }
 
@@ -78,7 +78,7 @@ module.exports = function (req, res, next) {
 
         Profiles.findOneAndRemove(target, function (err) {
             if (err) { throw err; }
-            return res.status(200).json('profile deleted');
+            return res.status(200).send('profile deleted');
         });
 
     }
@@ -108,7 +108,7 @@ module.exports = function (req, res, next) {
                 
             default:
                 // respond with help commands
-                return res.status(200).json(helpResponse(postBody.user_name));
+                return res.status(200).send(helpResponse(postBody.user_name));
         }
 
         // return res.status(200).json(botPayload);
