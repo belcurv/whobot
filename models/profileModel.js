@@ -23,10 +23,10 @@ var mongoose = require('mongoose'),
             'team_domain' : String,
             'channel_id'  : String,
             'channel_name': String,
-            'timestamp'   : String, // we generate this
             'user_id'     : String,
             'user_name'   : String,
-            'attrs'       : String
+            'postText'    : String,
+            'timestamp'   : String  // we generate this
         }
     ),
     Profiles = mongoose.model('Profiles', profileSchema);
