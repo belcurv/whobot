@@ -43,13 +43,19 @@ module.exports = function (req, res, next) {
     function getOneProfile() {
         
         var target = {
-            user_name   : /@\w+/g.exec(postBody.postText)[0],
-            team_domain : postBody.team_domain
+            user_name : postBody.postText.split(' ')[3].replace('@', ''),
+            team_id   : postBody.team_id
         };
-
+        
         Profiles.findOne(target, function (err, profile) {
             if (err) { throw err; }
-            return res.status(200).send(profile);
+            
+            var skills = profile.postText
+                .split('/whobot I know ')[1]  // remove trigger keywords
+                .split(',')                   // make new array
+                .map( el => el.trim() );      // trim whitespace around els
+            
+            return res.status(200).send(`Team member *${profile.user_name}* knows how to spell (aka, is proficient with) *${skills.join(', ')}*`);
         });
 
     }
