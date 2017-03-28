@@ -1,8 +1,16 @@
 /* jshint node: true, esversion:6 */
 
-var cr = require('./config.json'),
-    uname = process.env.DB_UNAME || cr.uname,
-    pwd   = process.env.DB_PWD   || cr.pwd;
+var env = process.env.NODE_ENV || 'development',
+    cr, uname, pwd;
+
+if (env === 'production') {
+    uname = process.env.DB_UNAME;
+    pwd   = process.env.DB_PWD;
+} else {
+    cr    = require('./config.json');
+    uname = cr.uname;
+    pwd   = cr.pwd;
+}
 
 module.exports = {
     
