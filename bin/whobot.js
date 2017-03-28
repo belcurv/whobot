@@ -39,14 +39,26 @@ module.exports = function (req, res, next) {
     
     /* ============================== db work ============================== */
     
-    // get one profile by team_domain/user_name
+    /* get one profile by team_id/user_name
+       Slack POST looks like this
+        {
+            team_id: 'T43U70EMR',
+            team_domain: 'hardlyknewhim',
+            channel_id: 'C439EPS1E',
+            channel_name: 'general',
+            user_id: 'U44M4PF8X',
+            user_name: 'jay',
+            postText: 'who is <@U44M4PF8X|jay>',
+            timestamp: 2017-03-28T03:13:28.465Z
+        }
+    */
     function getOneProfile() {
         
         console.log(postBody);
         
         var target = {
-            user_name : postBody.postText.split(' ')[3].replace('@', ''),
-            team_id   : postBody.team_id
+            user_id : postBody.postText.match(/<@[a-z0-9]+/i)[0].replace('<@', ''),
+            team_id : postBody.team_id
         };
         
         Profiles.findOne(target, function (err, profile) {
