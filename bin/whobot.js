@@ -55,7 +55,7 @@ module.exports = function (req, res, next) {
                 .split(',')                   // make new array
                 .map( el => el.trim() );      // trim whitespace around els
             
-            return res.status(200).send(`Team member *${profile.user_name}* knows how to spell (aka, is proficient with) *${skills.join(', ')}*`);
+            return res.status(200).send(`Team member *${profile.user_name}* is proficient with *${skills.join(', ')}*`);
         });
 
     }
