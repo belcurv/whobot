@@ -40,7 +40,7 @@ module.exports = function (req, res, next) {
     /* ============================== db work ============================== */
     
     /* get one profile by team_id/user_name
-       Slack POST looks like this
+       ESCAPED Slack POST looks like this
         {
             team_id: 'T43U70EMR',
             team_domain: 'hardlyknewhim',
