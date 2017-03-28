@@ -42,10 +42,12 @@ module.exports = function (req, res, next) {
     // get one profile by team_domain/user_name
     function getOneProfile() {
         
-//        var target = {
-//            user_name : postBody.postText.split(' ')[3].replace('@', ''),
-//            team_id   : postBody.team_id
-//        };
+        console.log(postBody);
+        
+        var target = {
+            user_name : postBody.postText.split(' ')[3].replace('@', ''),
+            team_id   : postBody.team_id
+        };
         
         Profiles.findOne(target, function (err, profile) {
             if (err) { throw err; }
@@ -55,8 +57,7 @@ module.exports = function (req, res, next) {
                 .split(',')                   // make new array
                 .map( el => el.trim() );      // trim whitespace around els
             
-//            return res.status(200).send(`Team member *${profile.user_name}* is proficient with *${skills.join(', ')}*`);
-            return res.status(200).send(postBody.postText);
+            return res.status(200).send(`Team member *${profile.user_name}* is proficient with *${skills.join(', ')}*`);
         });
 
     }
