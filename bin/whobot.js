@@ -65,7 +65,7 @@ module.exports = function (req, res, next) {
             if (err) { throw err; }
             
             var skills = profile.postText
-                .split('/whobot I know ')[1]  // remove trigger keywords
+                // .split('/whobot I know ')[1]  // remove trigger keywords, necessary for local testing
                 .split(',')                   // make new array
                 .map( el => el.trim() );      // trim whitespace around els
             
@@ -109,18 +109,21 @@ module.exports = function (req, res, next) {
         
           switch(true) {
                 
-            case /who is/gi.test(postBody.postText):
+            case /^who is/gi.test(postBody.postText):
                 // respond with a team member's profile
+                postBody.postText = req.body.text.substring(7);
                 getOneProfile();
                 break;
                 
-            case /I know/gi.test(postBody.postText):
+            case /^I know/gi.test(postBody.postText):
                 // post user's profile to database
+                postBody.postText = req.body.text.substring(6);
                 addProfile();
                 break;
                 
-            case /forget me/gi.test(postBody.postText):
+            case /^forget me/gi.test(postBody.postText):
                 // delete user's profile from database
+                postBody.postText = req.body.text.substring(9);
                 deleteProfile();
                 break;
                 
