@@ -172,9 +172,6 @@ module.exports = function (req, res, next) {
     // add a user profile
     function addProfile() {
         
-        // *** todo: if user already exists, update existing record
-        
-        
         // add 'skills' array property to POST body before saving
         // **** todo: map() through our skills dictionary to sanitize strings
         postBody.skills = (postBody.postText)
@@ -182,14 +179,22 @@ module.exports = function (req, res, next) {
             .split(',')
             .map( (e) => e.trim() );
             // .map( (s) => fetchSkill(s) );  // <-- todo
-                
-        Profiles(postBody)
-            .save( (err) => {
+        
+
+        /* using .update() with {upsert: true} option, so that we UPDATE
+           existing records and ADD records if they don't already exist.
+           API: Model.update(conditions, doc, [options], [callback])
+        */
+        Profiles.update(
+            { user_id : postBody.user_id },   // conditions
+            postBody,                         // doc
+            { upsert : true },                // options
+            function (err) {                  // callback
                 if (err) console.log('Error:', err);
             
                 return res
                     .status(200)
-                    .send('Success - new profile saved');
+                    .send('Success - profile saved');
             });
     }
 
