@@ -36,6 +36,7 @@ app.use(function (err, req, res, next) {
 
 /* ============================= CONNECT TO DB ============================= */
 mongoose.connect(config.getDbConnectionString());
+mongoose.Promise = global.Promise;
 
 
 

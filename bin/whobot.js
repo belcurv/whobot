@@ -64,6 +64,28 @@ module.exports = function (req, res, next) {
     function invalidRequest(you, attr) {
         return `Invalid request @${you}: *missing ${attr}*`;
     }
+
+    
+    /* generate response string for 'who knows' requests
+     *
+     * @params    [array]    profiles   [all matched profiles]
+     * @params    [string]   skill      [the skill used in query]
+     * @returns   [string]              [response message]
+    */
+    function whoKnowsResponse(profiles, skill) {
+        
+        var users = profiles
+            .map( (profile) => `@${profile.user_name}` )
+            .join(', '),
+            
+            // responses
+            none = `No team members know *${skill}*.`,
+            one  = `Team member *${users}* knows *${skill}*.`,
+            some = `The following team members know *${skill}*:\n*${users}*`;
+        
+        return (!profiles.length) ? none :
+            (profiles.length === 1) ? one : some;
+    }
     
     
     /* check for valid user ID
@@ -76,27 +98,44 @@ module.exports = function (req, res, next) {
     }
     
     
+    /* build target 'user object for db search
+     *
+     * @params    [object]   pb   [postBody object]
+     * @returns   [object]        [formatted user object for db query]
+    */
+    function userTarget(pb) {
+        return {
+            user_id : pb.postText.match(/<@[a-z0-9]+/i)[0].replace('<@', ''),
+            team_id : pb.team_id
+        };
+    }
+    
+    
     /* ============================== db work ============================== */
     
     // get one profile by team_id/user_name
     function getOneProfile() {
         
-        // console.log(postBody);
+        console.log(postBody);
         
         if (!validUser(postBody.postText)) {
-            return res.status(400).send(invalidRequest(postBody.user_name, '@ in username'));
+            return res
+                .status(400)
+                .send(invalidRequest(postBody.user_name, '@ in username'));
         }
         
-        var target = {
-            user_id : postBody.postText.match(/<@[a-z0-9]+/i)[0].replace('<@', ''),
-            team_id : postBody.team_id
-        };
-        
-        Profiles.findOne(target, function (err, profile) {
-            if (err) throw err;
+        Profiles
+            .findOne(userTarget(postBody)).exec()
+            .then( (profile) =>  {
             
-            return res.status(200).send(`Team member *${profile.user_name}* is proficient with *${profile.skills.join(', ')}*`);
-        });
+                let name   = profile.user_name,
+                    skills = profile.skills.join(', ');
+            
+                return res
+                    .status(200)
+                    .send(`Team member *${name}* knows:\n*${skills}*`);
+            })
+            .catch( (err) => console.log('Error:', err));
 
     }
     
@@ -106,7 +145,9 @@ module.exports = function (req, res, next) {
         
         // handle missing postText
         if (!postBody.postText || postBody.postText.length < 1) {
-            return res.status(400).send(invalidRequest(postBody.user_name, 'requested skill'));
+            return res
+                .status(400)
+                .send(invalidRequest(postBody.user_name, 'requested skill'));
         }
         
         // capture requested skill
@@ -114,21 +155,16 @@ module.exports = function (req, res, next) {
         var skill = postBody.postText.split(/,|\s/)[0];
         
         // find documents where 'skill' in 'skills'
-        Profiles.find({ skills: skill }, function (err, profiles) {
+        Profiles
+            .find({ skills: skill }).exec()
+            .then( (profiles) => {
+
+                return res
+                    .status(200)
+                    .send(whoKnowsResponse(profiles, skill));
             
-            if (err) throw err;
-            
-            // build comma separated list of matched users
-            var users = profiles
-                .map( (profile) => `@${profile.user_name}` )
-                .join(', '),
-                
-                // build singular/plural response phrase
-                phrase = (profiles.length > 1) ? `s ${users} have` : ` ${users} has`;
-            
-            return res.status(200).send(`Team member${phrase} experience with *${skill}*`);
-            
-        });
+            })
+            .catch( (err) => console.log('Error:', err));
         
     }
 
@@ -136,7 +172,8 @@ module.exports = function (req, res, next) {
     // add a user profile
     function addProfile() {
         
-        // **** todo: check if user already exists. if YES, update existing record
+        // *** todo: if user already exists, update existing record
+        
         
         // add 'skills' array property to POST body before saving
         // **** todo: map() through our skills dictionary to sanitize strings
@@ -147,9 +184,12 @@ module.exports = function (req, res, next) {
             // .map( (s) => fetchSkill(s) );  // <-- todo
                 
         Profiles(postBody)
-            .save(function (err) {
-                if (err) throw err;
-                return res.status(200).send('Success - new profile saved');
+            .save( (err) => {
+                if (err) console.log('Error:', err);
+            
+                return res
+                    .status(200)
+                    .send('Success - new profile saved');
             });
     }
 
