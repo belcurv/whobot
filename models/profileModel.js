@@ -26,7 +26,8 @@ var mongoose = require('mongoose'),
             'user_id'     : String,
             'user_name'   : String,
             'postText'    : String,
-            'timestamp'   : String  // we generate this
+            'timestamp'   : String,  // we generate this
+            'skills'      : Array
         }
     ),
     Profiles = mongoose.model('Profiles', profileSchema);
