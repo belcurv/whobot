@@ -110,6 +110,7 @@ module.exports = function (req, res, next) {
         }
         
         // capture requested skill
+        // *** todo: parse requested skill through our skills dictionary
         var skill = postBody.postText.split(/,|\s/)[0];
         
         // find documents where 'skill' in 'skills'
