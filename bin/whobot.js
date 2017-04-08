@@ -61,8 +61,8 @@ module.exports = function (req, res, next) {
      * @params    [string]   attr   [the missing attribute]
      * @returns   [string]          [user specific help message]
     */
-    function invalidRequest(you, attr) {
-        return `Invalid request @${you}: *missing ${attr}*`;
+    function invalidRequest(you, msg) {
+        return `Invalid request @${you}: *${msg}*`;
     }
 
     
@@ -88,16 +88,6 @@ module.exports = function (req, res, next) {
     }
     
     
-    /* check for valid user ID
-     *
-     * @params    [string]   text   [user name from POST psotText property]
-     * @returns   [boolean]         [true if 'text' contains Slack user ID]
-    */
-    function validUser(text) {
-        return /<@[a-z0-9]+/i.test(text);
-    }
-    
-    
     /* build target 'user object for db search
      *
      * @params    [object]   pb   [postBody object]
@@ -118,10 +108,10 @@ module.exports = function (req, res, next) {
         
         console.log(postBody);
         
-        if (!validUser(postBody.postText)) {
+        if (!/<@[a-z0-9]+/i.test(postBody.postText)) {
             return res
                 .status(400)
-                .send(invalidRequest(postBody.user_name, '@ in username'));
+                .send(invalidRequest(postBody.user_name, 'invalid username'));
         }
         
         Profiles
@@ -147,7 +137,7 @@ module.exports = function (req, res, next) {
         if (!postBody.postText || postBody.postText.length < 1) {
             return res
                 .status(400)
-                .send(invalidRequest(postBody.user_name, 'requested skill'));
+                .send(invalidRequest(postBody.user_name, 'missing requested skill'));
         }
         
         // capture requested skill
