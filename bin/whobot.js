@@ -5,7 +5,7 @@ var BotFunctions = require('./botFunctions.js');
 
 module.exports = function (req, res, next) {
     
-    // collect info from the POST
+    // assembly info from Slack POST
     var postBody = {
         team_id      : req.body.team_id,
         team_domain  : req.body.team_domain,
@@ -25,32 +25,30 @@ module.exports = function (req, res, next) {
         case /^who is/gi.test(postBody.postText):
             // respond with a team member's profile
             postBody.postText = req.body.text.substring(7);
-            BotFunctions.getOneProfile(postBody, res);
+            BotFunctions.whoIs(postBody, res);
             break;
 
         case /^who knows/gi.test(postBody.postText):
             // find all users who know a specified skill
             postBody.postText = req.body.text.substring(10);
-            BotFunctions.getMatchingProfiles(postBody, res);
+            BotFunctions.whoKnows(postBody, res);
             break;
 
         case /^I know/gi.test(postBody.postText):
             // post user's profile to database
             postBody.postText = req.body.text.substring(7);
-            BotFunctions.addProfile(postBody, res);
+            BotFunctions.iKnow(postBody, res);
             break;
 
         case /^forget me/gi.test(postBody.postText):
             // delete user's profile from database
             postBody.postText = req.body.text.substring(9);
-            BotFunctions.deleteProfile(postBody, res);
+            BotFunctions.forgetMe(postBody, res);
             break;
 
         default:
-            // default response = help commands
-            return res
-                .status(200)
-                .send(BotFunctions.helpResponse(postBody.user_name));
+            // default response: show commands
+            BotFunctions.help(postBody.user_name, res);
     }
     
 };
