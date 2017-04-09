@@ -16,8 +16,7 @@
 
 */
 
-var bodyParser = require('body-parser'),
-    Profiles   = require('../models/profileModel');
+var Profiles = require('../models/profileModel');
 
 module.exports = function (req, res, next) {
     
