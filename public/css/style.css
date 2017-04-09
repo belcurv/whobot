@@ -8,7 +8,10 @@ body {
 body {
     display: flex;
     flex-direction: column;
-    background: #666666 url(../assets/Grey_Feathers_dim.jpg) top center;
+    background: #333 url(../assets/Grey_Feathers_dim.jpg);
+    background-attachment: fixed;
+    background-position: top center;
+    background-repeat: no-repeat;
     background-size: cover;
     font-family: Arial, sans-serif;
     color: #fff;
@@ -21,6 +24,7 @@ p {
 }
 
 header {
+    flex: none;
     display: flex;
     flex-flow: row nowrap;
     justify-content: center;
@@ -38,9 +42,67 @@ section {
 }
 
 .container {
-    background: rgba(0,0,0,.6);
-    box-shadow: 0 0 10px 1px #18d;
+    background: rgba(255,255,255,.75);
+    color: black;
+    box-shadow: 0 0 15px 2px #000;
     padding: .1em 1em;
     max-width: 1000px;
     margin: auto;
+}
+
+.inlinecode,
+.codeblock {
+    background: #333;
+    color: white;
+}
+
+.codeblock {
+    padding: 1em;
+}
+
+.inlinecode {
+    font-family: monospace;
+    padding: .15em .5em;
+}
+
+.examples {
+    display: flex;
+    flex-direction: column;
+}
+
+.example {
+    margin-bottom: 1em;
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.example > p {
+    line-height: 1.25em;
+    flex: 0 0 35%;
+    margin: 0;
+}
+
+.example > div {
+    flex: auto;
+    padding-left: 1em;
+    overflow: hidden;
+}
+
+.example > div > p {
+    margin-bottom: .25em;
+}
+
+/* ========================== responsive boogers =========================== */
+
+@media all and (max-width: 720px) {
+    
+    .example {
+        display: block;
+    }
+    
+    .example > div {
+        padding-left: 0;
+        margin-top: .5em;
+    }
+    
 }

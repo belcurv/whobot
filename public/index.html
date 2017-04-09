@@ -32,24 +32,61 @@
     
         <div class="container">
             
-            <h1>Aw, it’s a Slack Bot!</h1>
+            <h1>Whobot is a Slack <span class="inlinecode">/slash</span> command</h3>
 
-            <h3><em>(really just a /slash command)</em></h3>
+            <h3>Purpose: Whobot remembers skills you give it to describe yourself, and can recall other team members' skills on command.  Whobot is <em>opt-in</em> - it will only remember your skills if you tell it to, and will forget about you if instructed to do so.</h3>
 
-            <h3>Purpose: Whobot will "remember" attributes you give it to describe yourself.<br> Whobot listens for a set of keywords in messages, and takes action accordingly:</h3>
+            <pre class="codeblock">
+Hi @user, I'm Whobot. I respond to the following commands:
 
-            <pre>
-    Hi @user, I'm Whobot. I respond to the following commands:
+/whobot I know {skill_1, skill_2}    // tell Whobot what you know
+/whobot who is {@user_name}          // get a user's skills
+/whobot who knows {skill}            // get all users with a skill
+/whobot forget me                    // tell Whobot to forget you</pre>
 
-    /whobot I know {skill_1, skill_2}    // tell Whobot what you know
-    /whobot who is {@user_name}          // get a user's skills
-    /whobot who knows {skill}            // get all users with a skill
-    /whobot forget me                    // tell Whobot to forget you
-            </pre>
-
-            <button>Add To Slack</button>
+            <button>ToDo: Add To Slack Button Goes Here</button>
             
-            <h3>Examples:</h3>
+            <h2>How to Use:</h2>
+            
+            <div class="examples">
+               
+                <div class="example">
+                    <p><span class="inlinecode">/whobot I know {skill, skill}</span><br>
+                    Tell Whobot about you. Include a comma-separated list of skills you know.</p>
+                    <div>
+                        <p class="inlinecode">/whobot I know javascript, jquery, node, mongo, angular</p>
+                        <img src="assets/I-know.png" alt="" class="image">
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <p><span class="inlinecode">/whobot who is {@user_name}</span> <br>
+                    Ask Whobot about another team member to discover which skills they claim to know.</p>
+                    <div>
+                        <p class="inlinecode">/whobot who is @jay</p>
+                        <img src="assets/who-is.png" alt="" class="image">
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <p><span class="inlinecode">/whobot who knows {skill}</span><br>
+                       Retrieve a list of all users who know your specific skill.</p>
+                    <div>
+                        <p class="inlinecode">/whobot who knows javascript</p>
+                        <img src="assets/who-knows.png" alt="" class="image">
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <p><span class="inlinecode">/whobot forget me</span><br>
+                       Remove all knowledge of yourself from Whobot's memory.</p>
+                    <div>
+                        <p class="inlinecode">/whobot forget me</p>
+                        <img src="assets/forget-me.png" alt="" class="image">
+                    </div>
+                </div>
+                
+            </div>
 
         </div>
     
