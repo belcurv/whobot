@@ -100,7 +100,7 @@ function getOneProfile(postBody, res) {
     if (!/<@[a-z0-9]+/i.test(postBody.postText)) {
         return res
             .status(400)
-            .send(invalidRequest(postBody.user_name, 'invalid username'));
+            .send(invalidRequest(postBody.user_name, 'invalid username.'));
     }
 
     Profiles
@@ -111,7 +111,7 @@ function getOneProfile(postBody, res) {
             if (!profile) {
                 return res
                     .status(404)
-                    .send(invalidRequest(postBody.user_name, 'team member not found'));
+                    .send(invalidRequest(postBody.user_name, `I don't know about that team member.`));
             }
 
             let name   = profile.user_name,
@@ -138,7 +138,7 @@ function getMatchingProfiles(postBody, res) {
     if (!postBody.postText || postBody.postText.length < 1) {
         return res
             .status(400)
-            .send(invalidRequest(postBody.user_name, 'missing requested skill'));
+            .send(invalidRequest(postBody.user_name, 'missing requested skill.'));
     }
 
     // capture requested skill
@@ -190,7 +190,7 @@ function addProfile(postBody, res) {
 
             return res
                 .status(200)
-                .send('Success - profile saved');
+                .send('Success - profile saved.');
         });
 }
 
@@ -210,7 +210,7 @@ function deleteProfile(postBody, res) {
 
     Profiles.findOneAndRemove(target, function (err) {
         if (err) throw err;
-        return res.status(200).send(`${postBody.user_name}'s profile has been deleted`);
+        return res.status(200).send(`${postBody.user_name}'s profile has been deleted.`);
     });
 
 }
