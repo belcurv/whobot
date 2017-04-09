@@ -1,0 +1,46 @@
+html,
+body {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    background: #666666 url(../assets/Grey_Feathers_dim.jpg) top center;
+    background-size: cover;
+    font-family: Arial, sans-serif;
+    color: #fff;
+    height: 100vh;
+}
+
+p {
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    background: linear-gradient(rgba(0,0,0,1), rgba(0,0,0,0));
+}
+
+header > pre {
+    margin: 0;
+    font-weight: bold;
+}
+
+section {
+    flex: 1;
+    padding: 0 1em;
+}
+
+.container {
+    background: rgba(0,0,0,.6);
+    box-shadow: 0 0 10px 1px #18d;
+    padding: .1em 1em;
+    max-width: 1000px;
+    margin: auto;
+}

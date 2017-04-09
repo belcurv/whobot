@@ -1,40 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    
     <title>Whobot - A Slack /Slash Command</title>
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/footer.css">
+    
+    
 </head>
+
 <body>
+
+    <header>
+        
+        <pre>
+ __      __ __          ___            __   
+/  \    /  \  |__   ____\_ |__   _____/  |_ 
+\   \/\/   /  |  \ /  _ \| __ \ /  _ \   __\
+ \        /|   Y  (  <_> ) \_\ (  <_> )  |  
+  \__/\  / |___|  /\____/|___  /\____/|__|  
+       \/       \/           \/         
+        </pre>
+        
+    </header>
+
+    <section>
     
-    <pre>
-           __      __ __          ___            __   
-          /  \    /  \  |__   ____\_ |__   _____/  |_ 
-          \   \/\/   /  |  \ /  _ \| __ \ /  _ \   __\
-           \        /|   Y  (  <_> ) \_\ (  <_> )  |  
-            \__/\  / |___|  /\____/|___  /\____/|__|  
-                 \/       \/           \/         
-    </pre>
+        <div class="container">
+            
+            <h1>Aw, it’s a Slack Bot!</h1>
 
-<h1>Aw, it’s a Slack Bot!</h1>
+            <h3><em>(really just a /slash command)</em></h3>
 
-<p><em>(really just a /slash command)</em></p>
+            <h3>Purpose: Whobot will "remember" attributes you give it to describe yourself.<br> Whobot listens for a set of keywords in messages, and takes action accordingly:</h3>
 
-<p>Purpose: Whobot will "remember" attributes you give it to describe yourself. Whobot listens for a set of keywords in messages, and takes action accordingly:</p>
+            <pre>
+    Hi @user, I'm Whobot. I respond to the following commands:
 
-<pre>
-Hi @user, I'm Whobot. I respond to the following commands:
+    /whobot I know {skill_1, skill_2}    // tell Whobot what you know
+    /whobot who is {@user_name}          // get a user's skills
+    /whobot who knows {skill}            // get all users with a skill
+    /whobot forget me                    // tell Whobot to forget you
+            </pre>
 
-/whobot I know {skill_1, skill_2}    // tell Whobot what you know
-/whobot who is {@user_name}          // get a user's skills
-/whobot who knows {skill}            // get all users with a skill
-/whobot forget me                    // tell Whobot to forget you
-</pre>
+            <button>Add To Slack</button>
+            
+            <h3>Examples:</h3>
 
-<h2>Tech-stack</h2>
-
-<p>Slack API, Node.js, Heroku, a Mongo database</p>
-
-<h3>Notes
+        </div>
     
+    </section>
+
+    <footer class="whobot-footer"></footer>
+    
+    <!-- javascript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="js/footer.js"></script>
+    <script src="js/app.js"></script>
+
+
 </body>
+
 </html>
