@@ -61,9 +61,9 @@ function invalidRequest(you, msg) {
         'respone_type': 'ephemeral',
         'attachments': [
             {
-                'color': badColor,
-                'text': `Sorry @${you}: *${msg}*`,
-                'mrkdwn_in': ['text']
+                'color'     : badColor,
+                'text'      : `Sorry @${you}: *${msg}*`,
+                'mrkdwn_in' : ['text']
             }
         ]
     };    
@@ -91,36 +91,51 @@ function whoKnowsResponse(profiles, skill) {
 
         // responses
         none = `*No team members know* \`${skill}\`.`,
-        some = `*The following team members know* \`${skill}\` :\n\`\`\`${users}\`\`\``;
+        some = `*The following team members know* \`${skill}\`\n\`\`\`${users}\`\`\``;
         
         return {
             'respone_type': 'ephemeral',
             'attachments': [
                 {
-                    'color': okColor,
-                    'text': (count === 0) ? none : some,
-                    'mrkdwn_in': ['text'],
-                    'footer': `Total: ${count}`
+                    'color'     : okColor,
+                    'text'      : (count === 0) ? none : some,
+                    'mrkdwn_in' : ['text'],
+                    'footer'    : `Total: ${count}`
                 }
             ]
         };
 }
 
 
-/* build target 'user' object for db search
+/* parse skill string through fetchSkill()
  *
- * @params    [object]   pb   [postBody object]
- * @returns   [object]        [formatted user object for db query]
+ * @params    [string]   str   [the raw input string]
+ * @returns   [string]         [normalized skill name from DD]
 */
-function userTarget(pb) {
-    return {
-        user_id : pb.postText.match(/<@[a-z0-9]+/i)[0].replace('<@', ''),
-        team_id : pb.team_id
-    };
+function parseSkill(str) {
+    const ogSkill = str.split(/,|\s/)[0];
+    return fetchSkill(ogSkill);
 }
 
 
-/* =============================== bot logic =============================== */
+/* escape skill string for friendly regex
+ *   escapes:  +  -  .  /  [  ]
+ *
+ * @params    [string]   sk   [the original skill name]
+ * @returns   [string]        [skill with escaped characters]
+*/
+function escapeSkill(sk) {
+    return sk
+        .replace( /\+/g, `\\+`)
+        .replace( /\-/g, `\\-`)
+        .replace( /\./g, `\\.`)
+        .replace( /\//g, `\\/`)
+        .replace( /\[/g, `\\[`)
+        .replace( /\]/g, `\\]`);
+}
+
+
+/* ============================ public methods ============================= */
 
 
 /* get help response
@@ -149,20 +164,34 @@ function getOneProfile(postBody, res) {
     //console.log(postBody);
 
     if (!/<@[a-z0-9]+/i.test(postBody.postText)) {
+        let name = postBody.user_name,
+            msg  = `invalid username: ${postBody.postText}`;
+        
         return res
             .status(400)
-            .send(invalidRequest(postBody.user_name, `invalid username: ${postBody.postText}`));
+            .send(invalidRequest(name, msg));
     }
+    
+    const uid = postBody.postText.match(/<@[a-z0-9]+/i)[0].replace('<@', ''),
+          user = {
+              user_id : uid,
+              team_id : postBody.team_id
+          };
+    
 
     Profiles
-        .findOne(userTarget(postBody)).exec()
+        .findOne(user).exec()
         .then( (profile) =>  {
         
             // handle user not found
             if (!profile) {
+                
+                let name = postBody.user_name,
+                    msg  = `I don't know that team member.`;
+                
                 return res
                     .status(404)
-                    .send(invalidRequest(postBody.user_name, `I don't know that team member.`));
+                    .send(invalidRequest(name, msg));
             }
         
             let name   = profile.user_name,
@@ -172,12 +201,12 @@ function getOneProfile(postBody, res) {
                     'respone_type': 'ephemeral',
                     'attachments': [
                         {
-                            'color': okColor,
-                            'title': `@${name} knows:`,
-                            'text': `\`\`\`${skills}\`\`\``,
-                            'mrkdwn_in': ['text'],
-                            'footer': 'Last updated',
-                            'ts': time
+                            'color'     : okColor,
+                            'title'     : `@${name} knows:`,
+                            'text'      : `\`\`\`${skills}\`\`\``,
+                            'mrkdwn_in' : ['text'],
+                            'footer'    : 'Last updated',
+                            'ts'        : time
                         }
                     ]
                 };
@@ -206,20 +235,24 @@ function getMatchingProfiles(postBody, res) {
             .send(invalidRequest(postBody.user_name, 'missing requested skill.'));
     }
 
-    // capture requested skill
-    var skill = fetchSkill(postBody.postText.split(/,|\s/)[0]);
+    var parsedSkill  = parseSkill(postBody.postText),
+        escapedSkill = escapeSkill(parsedSkill);
 
     // find documents where 'skill' in 'skills' and
     // team_id matches the posting user's team_id
     Profiles
         .find({
-            skills: { $regex: new RegExp("^" + skill, "i") },
-            team_id: postBody.team_id }).exec()
+            skills: {
+                $regex: new RegExp('^' + escapedSkill, 'i')
+            },
+            team_id: postBody.team_id
+        })
+        .exec()
         .then( (profiles) => {
-
+        
             return res
                 .status(200)
-                .send(whoKnowsResponse(profiles, skill));
+                .send(whoKnowsResponse(profiles, parsedSkill));
 
         })
         .catch( (err) => console.log('Error:', err));
@@ -237,21 +270,21 @@ function addProfile(postBody, res) {
     
     // handle no skills
     if (!postBody.postText || postBody.postText.length < 1) {
+        let name = postBody.user_name,
+            msg  = 'you need to include a list of skills.';
+        
         return res
             .status(400)
-            .send(invalidRequest(postBody.user_name, 'you need to include a list of skills.'));
+            .send(invalidRequest(name, msg));
     }    
     
     // add 'skills' array property to POST body before saving
     postBody.skills = (postBody.postText)
-        .trim()
+        .replace(/^{|}$/gm, '')  // replace enclosing {curly braces}
         .split(',')
         .map( (e) => fetchSkill(e.trim()) );
-
-    /* using .update() with {upsert: true} option, so that we UPDATE
-       existing records and ADD records if they don't already exist.
-       API: Model.update(conditions, doc, [options], [callback])
-    */
+    
+    // do the work
     Profiles.update(
         { user_id : postBody.user_id },   // conditions
         postBody,                         // doc
@@ -259,16 +292,17 @@ function addProfile(postBody, res) {
         function (err) {                  // callback
             if (err) console.log('Error:', err);
             
-            let you = postBody.user_name,
-                time   = Date.parse(postBody.timestamp) / 1000,
-                data = {
+            let you   = postBody.user_name,
+                time  = Date.parse(postBody.timestamp) / 1000,
+                count = postBody.skills.length,
+                data  = {
                     'respone_type': 'ephemeral',
                     'attachments': [
                         {
-                            'color': okColor,
-                            'text': `Thanks @${you} - *profile saved*.`,
+                            'color'    : okColor,
+                            'text'     : `Thanks @${you} - *profile saved*.`,
                             'mrkdwn_in': ['text'],
-                            'footer': `Number of skills: ${postBody.skills.length}`
+                            'footer'   : `Number of skills: ${count}`
                         }
                     ]
                 };  
@@ -297,9 +331,9 @@ function deleteProfile(postBody, res) {
             'respone_type': 'ephemeral',
             'attachments': [
                 {
-                    'color': okColor,
-                    'text': `*Profile deleted* - sorry to see you go @${you}.`,
-                    'mrkdwn_in': ['text']
+                    'color'     : okColor,
+                    'text'      : `*Profile deleted* - nice knowing you @${you}.`,
+                    'mrkdwn_in' : ['text']
                 }
             ]
         };
@@ -312,7 +346,7 @@ function deleteProfile(postBody, res) {
 }
 
 
-/* ================================ exports ================================ */
+/* =========================== expose public api =========================== */
 
 module.exports = {
     
