@@ -207,11 +207,12 @@ function getMatchingProfiles(postBody, res) {
 
     // capture requested skill
     // *** todo: parse requested skill through our skills dictionary
-    var skill = postBody.postText.split(/,|\s/)[0];
+    var skill = fetchSkill(postBody.postText.split(/,|\s/)[0]);
 
     // find documents where 'skill' in 'skills'
     Profiles
-        .find({ skills: skill }).exec()
+        .find({ skills: { $regex: new RegExp("^" + skill, "i") } }).exec()
+        // .find({ skills: skill }).exec()
         .then( (profiles) => {
 
             return res
@@ -236,7 +237,7 @@ function addProfile(postBody, res) {
     if (!postBody.postText || postBody.postText.length < 1) {
         return res
             .status(400)
-            .send(invalidRequest(postBody.user_name, 'you need include a list of skills.'));
+            .send(invalidRequest(postBody.user_name, 'you need to include a list of skills.'));
     }    
     
     // add 'skills' array property to POST body before saving
@@ -244,7 +245,7 @@ function addProfile(postBody, res) {
     postBody.skills = (postBody.postText)
         .trim()
         .split(',')
-        .map( (e) => e.trim() );
+        .map( (e) => fetchSkill(e.trim()) );
         // .map( (s) => fetchSkill(s) );  // <-- todo
 
 
