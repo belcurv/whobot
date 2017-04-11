@@ -46,6 +46,7 @@ section {
     color: black;
     box-shadow: 0 0 15px 2px #000;
     padding: .1em 1em;
+/*    min-width: 400px;*/
     max-width: 1000px;
     margin: auto;
 }
@@ -94,7 +95,15 @@ section {
 
 /* ========================== responsive boogers =========================== */
 
-@media all and (max-width: 720px) {
+@media all and (max-width: 640px) {
+    
+    section {
+        padding: 0;
+    }
+    
+    .container {
+        padding: 0 .5em;
+    }
     
     .example {
         display: block;
