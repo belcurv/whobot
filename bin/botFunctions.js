@@ -1,8 +1,9 @@
 /* jshint esversion:6, node:true */
 
-var Profiles = require('../models/profileModel'),
-    okColor  = '#008080',
-    badColor = '#c33';
+var Profiles   = require('../models/profileModel'),
+    fetchSkill = require('./fetchSkill'),
+    okColor    = '#008080',
+    badColor   = '#c33';
 
 /* =========================== utility functions =========================== */
     
@@ -206,13 +207,14 @@ function getMatchingProfiles(postBody, res) {
     }
 
     // capture requested skill
-    // *** todo: parse requested skill through our skills dictionary
     var skill = fetchSkill(postBody.postText.split(/,|\s/)[0]);
 
-    // find documents where 'skill' in 'skills'
+    // find documents where 'skill' in 'skills' and
+    // team_id matches the posting user's team_id
     Profiles
-        .find({ skills: { $regex: new RegExp("^" + skill, "i") } }).exec()
-        // .find({ skills: skill }).exec()
+        .find({
+            skills: { $regex: new RegExp("^" + skill, "i") },
+            team_id: postBody.team_id }).exec()
         .then( (profiles) => {
 
             return res
@@ -241,13 +243,10 @@ function addProfile(postBody, res) {
     }    
     
     // add 'skills' array property to POST body before saving
-    // **** todo: map() through our skills dictionary to sanitize strings
     postBody.skills = (postBody.postText)
         .trim()
         .split(',')
         .map( (e) => fetchSkill(e.trim()) );
-        // .map( (s) => fetchSkill(s) );  // <-- todo
-
 
     /* using .update() with {upsert: true} option, so that we UPDATE
        existing records and ADD records if they don't already exist.
