@@ -1,6 +1,8 @@
 /* jshint esversion:6, node:true */
 
-var Profiles = require('../models/profileModel');
+var Profiles = require('../models/profileModel'),
+    okColor  = '#008080',
+    badColor = '#c33';
 
 /* =========================== utility functions =========================== */
     
@@ -15,7 +17,7 @@ function generateHelpResponse(you) {
         'respone_type': 'ephemeral',
         'attachments': [
             {
-                'color': '#009999',
+                'color': okColor,
                 'text': `Hi @${you}, I'm *Whobot*.\nI respond to the following commands:`,
                 'fields': [
                     {
@@ -58,7 +60,7 @@ function invalidRequest(you, msg) {
         'respone_type': 'ephemeral',
         'attachments': [
             {
-                'color': '#c33',
+                'color': badColor,
                 'text': `Sorry @${you}: *${msg}*`,
                 'mrkdwn_in': ['text']
             }
@@ -94,7 +96,7 @@ function whoKnowsResponse(profiles, skill) {
             'respone_type': 'ephemeral',
             'attachments': [
                 {
-                    'color': '#009999',
+                    'color': okColor,
                     'text': (count === 0) ? none : some,
                     'mrkdwn_in': ['text'],
                     'footer': `Total: ${count}`
@@ -148,7 +150,7 @@ function getOneProfile(postBody, res) {
     if (!/<@[a-z0-9]+/i.test(postBody.postText)) {
         return res
             .status(400)
-            .send(invalidRequest(postBody.user_name, 'invalid username.'));
+            .send(invalidRequest(postBody.user_name, `invalid username: ${postBody.postText}`));
     }
 
     Profiles
@@ -169,7 +171,7 @@ function getOneProfile(postBody, res) {
                     'respone_type': 'ephemeral',
                     'attachments': [
                         {
-                            'color': '#009999',
+                            'color': okColor,
                             'title': `@${name} knows:`,
                             'text': `\`\`\`${skills}\`\`\``,
                             'mrkdwn_in': ['text'],
@@ -263,7 +265,7 @@ function addProfile(postBody, res) {
                     'respone_type': 'ephemeral',
                     'attachments': [
                         {
-                            'color': '#009999',
+                            'color': okColor,
                             'text': `Thanks @${you} - *profile saved*.`,
                             'mrkdwn_in': ['text'],
                             'footer': `Number of skills: ${postBody.skills.length}`
@@ -295,7 +297,7 @@ function deleteProfile(postBody, res) {
             'respone_type': 'ephemeral',
             'attachments': [
                 {
-                    'color': '#009999',
+                    'color': okColor,
                     'text': `*Profile deleted* - sorry to see you go @${you}.`,
                     'mrkdwn_in': ['text']
                 }
