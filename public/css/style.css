@@ -46,9 +46,12 @@ section {
     color: black;
     box-shadow: 0 0 15px 2px #000;
     padding: .1em 1em;
-/*    min-width: 400px;*/
     max-width: 1000px;
     margin: auto;
+}
+
+.splash {
+    overflow: hidden;
 }
 
 .inlinecode,
@@ -78,7 +81,6 @@ section {
 }
 
 .example > p {
-    line-height: 1.25em;
     flex: 0 0 35%;
     margin: 0;
 }
@@ -89,9 +91,11 @@ section {
     overflow: hidden;
 }
 
-.example > div > p {
-    margin-bottom: .25em;
+.wideblock {
+    display: block;
+    margin-bottom: 5px;
 }
+
 
 /* ========================== responsive boogers =========================== */
 
