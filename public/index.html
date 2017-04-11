@@ -35,7 +35,11 @@
             <h1>a Slack <span class="inlinecode">/slash</span> command</h3>
 
             <h3>Purpose: Whobot remembers skills you give it to describe yourself, and can recall other team members' skills on command.  Whobot is <em>opt-in</em> - it will only remember your skills if you tell it to, and will forget about you if instructed to do so.</h3>
-
+            
+            <div class="splash">
+                <p class="inlinecode">/whobot</p>
+                <img src="assets/ss_help.png" alt="">
+            </div>
 
             <button>ToDo: Add To Slack Button Goes Here</button>
             
@@ -44,38 +48,38 @@
             <div class="examples">
                
                 <div class="example">
-                    <p><span class="inlinecode">/whobot I know {skill, skill}</span><br>
+                    <p><span class="inlinecode wideblock">/whobot I know {skill, skill}</span>
                     Tell Whobot about you. Include a comma-separated list of skills you know.</p>
                     <div>
-                        <p class="inlinecode">/whobot I know javascript, jquery, node, mongo, angular</p>
-                        <img src="assets/I-know.png" alt="" class="image">
+                        <p class="inlinecode">/whobot I know JavaScript, jQuery, Angular, es6, Node</p>
+                        <img src="assets/ss_I_know.png" alt="Whobot I know" class="image">
                     </div>
                 </div>
                 
                 <div class="example">
-                    <p><span class="inlinecode">/whobot who is {@user_name}</span> <br>
+                    <p><span class="inlinecode wideblock">/whobot who is {@user_name}</span>
                     Ask Whobot about another team member to discover which skills they claim to know.</p>
                     <div>
                         <p class="inlinecode">/whobot who is @jay</p>
-                        <img src="assets/who-is.png" alt="" class="image">
+                        <img src="assets/ss_who_is.png" alt="Whobot who is" class="image">
                     </div>
                 </div>
                 
                 <div class="example">
-                    <p><span class="inlinecode">/whobot who knows {skill}</span><br>
+                    <p><span class="inlinecode wideblock">/whobot who knows {skill}</span>
                        Retrieve a list of all users who know your specific skill.</p>
                     <div>
                         <p class="inlinecode">/whobot who knows javascript</p>
-                        <img src="assets/who-knows.png" alt="" class="image">
+                        <img src="assets/ss_who_knows.png" alt="Whobot who knows" class="image">
                     </div>
                 </div>
                 
                 <div class="example">
-                    <p><span class="inlinecode">/whobot forget me</span><br>
+                    <p><span class="inlinecode wideblock">/whobot forget me</span>
                        Remove all knowledge of yourself from Whobot's memory.</p>
                     <div>
                         <p class="inlinecode">/whobot forget me</p>
-                        <img src="assets/forget-me.png" alt="" class="image">
+                        <img src="assets/ss_forget_me.png" alt="Whobot forget me" class="image">
                     </div>
                 </div>
                 
