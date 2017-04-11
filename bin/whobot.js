@@ -5,7 +5,7 @@ var BotFunctions = require('./botFunctions.js');
 
 module.exports = function (req, res, next) {
     
-    // assembly info from Slack POST
+    // assemble info from Slack POST
     var postBody = {
         team_id      : req.body.team_id,
         team_domain  : req.body.team_domain,
