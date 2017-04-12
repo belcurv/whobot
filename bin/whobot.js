@@ -5,6 +5,11 @@ var BotFunctions = require('./botFunctions.js');
 
 module.exports = function (req, res, next) {
     
+    if (req.body.token !== process.env.VERIFICATION_TOKEN) {
+        // request is NOT coming from Slack - abort
+        return;
+    }
+    
     // assemble info from Slack POST
     var postBody = {
         team_id      : req.body.team_id,

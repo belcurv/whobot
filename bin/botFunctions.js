@@ -1,9 +1,9 @@
 /* jshint esversion:6, node:true */
 
-var Profiles   = require('../models/profileModel'),
-    fetchSkill = require('./fetchSkill'),
-    okColor    = '#008080',
-    badColor   = '#c33';
+const Profiles   = require('../models/profileModel'),
+      fetchSkill = require('./fetchSkill'),
+      okColor    = '#008080',
+      badColor   = '#c33';
 
 /* =========================== utility functions =========================== */
     
@@ -23,17 +23,17 @@ function generateHelpResponse(you) {
                 'fields': [
                     {
                         'title': '1. Tell Whobot what you know:',
-                        'value': '```/whobot I know {skill_1, skill_2}```',
+                        'value': '```/whobot I know <skill_1>, <skill_2>```',
                         'short': false
                     },
                     {
                         'title': '2. Get a user\'s skills:',
-                        'value': '```/whobot who is {@user_name}```',
+                        'value': '```/whobot who is @user_name```',
                         'short': false
                     },
                     {
                         'title': '3. Get all users with a specified skill:',
-                        'value': '```/whobot who knows {skill}```',
+                        'value': '```/whobot who knows <skill>```',
                         'short': false
                     },
                     {
@@ -136,7 +136,6 @@ function escapeSkill(sk) {
 
 
 /* ============================ public methods ============================= */
-
 
 /* get help response
  *
