@@ -14,7 +14,7 @@ function authRouteHandler(req, res) {
     
     // on oauth fail
     if (!req.query.code) {
-        res.redirect('https://09d36b5c.ngrok.io/');
+        res.redirect('https://whobot.herokuapp.com/');
         return;
     }
 
