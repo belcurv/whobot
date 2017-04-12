@@ -42,6 +42,7 @@ section {
 }
 
 .container {
+    position: relative;
     background: rgba(255,255,255,.75);
     color: black;
     box-shadow: 0 0 15px 2px #000;
@@ -52,6 +53,12 @@ section {
 
 .splash {
     overflow: hidden;
+}
+
+.slack-btn {
+    position: absolute;
+    top: 1em;
+    right: 1em;
 }
 
 .inlinecode,
@@ -107,6 +114,13 @@ section {
     
     .container {
         padding: 0 .5em;
+    }
+    
+    .slack-btn {
+        display: block;
+        position: static;
+        text-align: center;
+        margin-bottom: 1em;
     }
     
     .example {

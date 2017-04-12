@@ -1,18 +1,33 @@
 {
   "name": "whobot",
   "version": "1.0.0",
-  "description": "",
+  "description": "Store and retrieve Slack team member skills",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "keywords": [],
-  "author": "belcurv",
+  "author": "Jay Schwane and Peter Martinson",
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.x.x",
+    "dotenv": "^4.0.0",
     "express": "^4.x.x",
     "mongoose": "^4.8.6",
-    "morgan": "^1.8.1"
-  }
+    "morgan": "^1.8.1",
+    "request": "^2.81.0"
+  },
+  "bin": {
+    "whobot": "botFunctions.js"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/belcurv/whobot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/belcurv/whobot/issues"
+  },
+  "homepage": "https://github.com/belcurv/whobot#readme"
 }

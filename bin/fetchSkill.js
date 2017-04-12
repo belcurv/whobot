@@ -7,15 +7,15 @@ var skills = require('./dataDictionary');
  *
  * @params   [string]   request    [skill name]
  * @returns  [string]              [standard or original skill]
-*/
-module.exports = function(request) {
-  var matchSkill = request;
-  for ( var skill in skills ) {
-    skills[skill].forEach(function(element) {
-      if ( request.toLowerCase() === element ) {
-        matchSkill = skill;
-      }
-    });
-  }
-  return matchSkill;
+ */
+module.exports = function (request) {
+    var matchSkill = request;
+    for (var skill in skills) {
+        skills[skill].forEach(function (element) {
+            if (request.toLowerCase() === element) {
+                matchSkill = skill;
+            }
+        });
+    }
+    return matchSkill;
 };
