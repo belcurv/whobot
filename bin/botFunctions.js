@@ -279,9 +279,10 @@ function addProfile(postBody, res) {
     
     // add 'skills' array property to POST body before saving
     postBody.skills = (postBody.postText)
-        .replace(/^{|}$/gm, '')  // replace enclosing {curly braces}
-        .split(',')
-        .map( (e) => fetchSkill(e.trim()) );
+        .replace(/^{|}$/gm, '')    // remove enclosing {curly braces}
+        .split(',')                // make array
+        .map( (s) => s.replace(/\band\b/g, '') )  // remove any 'and'
+        .map( (e) => fetchSkill(e.trim()) );      // trim and normalize
     
     // do the work
     Profiles.update(
