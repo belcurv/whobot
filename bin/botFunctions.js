@@ -135,6 +135,23 @@ function escapeSkill(sk) {
 }
 
 
+/* build sanitized & normalized skills list
+ *
+ * @params    [string]   skills   [original raw comma separated list]
+ * @returns   [array]             [normalized de-duped array of skills]
+*/
+function buildSkills(skills) {
+    var seen = {};
+    
+    return skills
+        .replace(/^{|}$/gm, '')    // remove enclosing {curly braces}
+        .split(',')                // make array
+        .map( (s) => s.replace(/\band\b/g, '') )  // remove any 'and'
+        .map( (e) => fetchSkill(e.trim()) )       // trim and normalize
+        .filter( (i) => seen.hasOwnProperty(i) ? false : (seen[i] = true) );  // de-dupe
+}
+
+
 /* ============================ public methods ============================= */
 
 /* get help response
@@ -278,11 +295,7 @@ function addProfile(postBody, res) {
     }    
     
     // add 'skills' array property to POST body before saving
-    postBody.skills = (postBody.postText)
-        .replace(/^{|}$/gm, '')    // remove enclosing {curly braces}
-        .split(',')                // make array
-        .map( (s) => s.replace(/\band\b/g, '') )  // remove any 'and'
-        .map( (e) => fetchSkill(e.trim()) );      // trim and normalize
+    postBody.skills = buildSkills(postBody.postText);
     
     // do the work
     Profiles.update(
