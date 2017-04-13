@@ -53,6 +53,7 @@ section {
 
 .splash {
     overflow: hidden;
+    text-align: center;
 }
 
 .slack-btn {
