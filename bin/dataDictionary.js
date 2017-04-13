@@ -56,7 +56,7 @@ module.exports = {
     'PHP': ['php'],
     'PostgreSQL': ['postgresql', 'postgresql'],
     'PowerShell': ['powershell'],
-    'Processing', ['processing.js', 'processing', 'processingjs'],
+    'Processing': ['processing.js', 'processing', 'processingjs'],
     'Python': ['python', 'py'],
     'R': ['r'],
     'ReactJS': ['reactjs', 'react.js', 'react', 'rjs'],
