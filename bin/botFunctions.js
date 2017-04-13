@@ -15,7 +15,7 @@ const Profiles   = require('../models/profileModel'),
 function generateHelpResponse(you) {
     
     return {
-        'respone_type': 'ephemeral',
+        'response_type': 'ephemeral',
         'attachments': [
             {
                 'color': okColor,
@@ -58,7 +58,7 @@ function generateHelpResponse(you) {
 */
 function invalidRequest(you, msg) {
     return {
-        'respone_type': 'ephemeral',
+        'response_type': 'ephemeral',
         'attachments': [
             {
                 'color'     : badColor,
@@ -94,7 +94,7 @@ function whoKnowsResponse(profiles, skill) {
         some = `*The following team members know* \`${skill}\`\n\`\`\`${users}\`\`\``;
         
         return {
-            'respone_type': 'ephemeral',
+            'response_type': 'ephemeral',
             'attachments': [
                 {
                     'color'     : okColor,
@@ -214,7 +214,7 @@ function getOneProfile(postBody, res) {
                 skills = profile.skills.join('\n'),
                 time   = Date.parse(profile.timestamp) / 1000,
                 data   = {
-                    'respone_type': 'ephemeral',
+                    'response_type': 'ephemeral',
                     'attachments': [
                         {
                             'color'     : okColor,
@@ -309,7 +309,7 @@ function addProfile(postBody, res) {
                 time  = Date.parse(postBody.timestamp) / 1000,
                 count = postBody.skills.length,
                 data  = {
-                    'respone_type': 'ephemeral',
+                    'response_type': 'ephemeral',
                     'attachments': [
                         {
                             'color'    : okColor,
@@ -341,7 +341,7 @@ function deleteProfile(postBody, res) {
     },
         you  = postBody.user_name,
         data = {
-            'respone_type': 'ephemeral',
+            'response_type': 'ephemeral',
             'attachments': [
                 {
                     'color'     : okColor,
