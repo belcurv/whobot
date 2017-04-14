@@ -357,7 +357,7 @@ function deleteProfile(postBody, res) {
         
         // handle user not found
         if (!profile) {
-            let msg = 'user not found.';
+            let msg = `I don't know you yet!`;
             return res
                 .status(400)
                 .send(invalidRequest(postBody.user_name, msg));
