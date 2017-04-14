@@ -41,8 +41,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // error handler
 app.use(function (err, req, res, next) {
-    console.log(err.stack);
-    res.status(400).send(err.message);
+    console.log('Error: ', err.stack);
+    res.status(500).send('Something broke...');
 });
 
 

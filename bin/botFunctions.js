@@ -303,7 +303,7 @@ function addProfile(postBody, res) {
         postBody,                         // doc
         { upsert : true },                // options
         function (err) {                  // callback
-            if (err) console.log('Error:', err);
+            if (err) throw err;
             
             let you   = postBody.user_name,
                 time  = Date.parse(postBody.timestamp) / 1000,
@@ -334,7 +334,7 @@ function addProfile(postBody, res) {
  * @returns  [object]              [populated response object]
 */
 function deleteProfile(postBody, res) {
-
+    
     var target = {
         team_id: postBody.team_id,
         user_id: postBody.user_id
@@ -351,8 +351,18 @@ function deleteProfile(postBody, res) {
             ]
         };
 
-    Profiles.findOneAndRemove(target, function (err) {
+    Profiles.findOneAndRemove(target, function (err, profile) {
+        
         if (err) throw err;
+        
+        // handle user not found
+        if (!profile) {
+            let msg = 'user not found.';
+            return res
+                .status(400)
+                .send(invalidRequest(postBody.user_name, msg));
+        }
+        
         return res.status(200).send(data);
     });
 
