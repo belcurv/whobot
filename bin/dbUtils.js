@@ -17,6 +17,7 @@ function getAllSkills() {
                     }
                 });
                 return skill_list.sort();
+            }
         })
         .catch( (err) => console.log('Error:', err));
 }
