@@ -19,28 +19,20 @@ module.exports = {
                 callback(skill_list.sort());
             })
             .catch( (err) => console.log('Error:', err));
-    }
-}
-// function getAllSkills() {
-//     Profiles
-//         .find({}, 'skills')
-//         .exec()
-//         .then( (skills_obj) => {
-//             var skill_list = [];
-//             for (var skill_array in skills_obj) {
-//                 skills_obj[skill_array].forEach( function(e) {
-//                     if ( skill_list.indexOf(e) < 0 ) {
-//                         skill_list.push(e);
-//                     }
-//                 });
-//                 return skill_list.sort();
-//             }
-//         })
-//         .catch( (err) => console.log('Error:', err));
-// }
+    },
 
-function getSkillList() {
-  // return removeDuplicates(getAllSkills());
+    getSkillList : function(callback) {
+        this.getAllSkills( (full_skill_list) => {
+            var unique_skill_list = [];
+            full_skill_list.forEach( (skill) => {
+                if ( unique_skill_list.indexOf(skill) < 0 ) {
+                    unique_skill_list.push(skill);
+                }
+            });
+            callback(unique_skill_list.sort());
+        });
+    }
+
 }
 
 function countSkills() {
