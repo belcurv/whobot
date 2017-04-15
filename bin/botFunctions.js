@@ -37,7 +37,12 @@ function generateHelpResponse(you) {
                         'short': false
                     },
                     {
-                        'title': '4. Erase yourself from Whobot\'s memory:',
+                        'title': '4. Remove a specified skill:',
+                        'value': '```/whobot forget <skill>```',
+                        'short': false
+                    },
+                    {
+                        'title': '5. Erase yourself from Whobot\'s memory:',
                         'value': '```/whobot forget me```',
                         'short': false
                     }
