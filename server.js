@@ -68,7 +68,9 @@ app.get('/auth', slack);
 app.post('/whobot', whobot);
 
 app.get('/skillz', (req, res) => {
-    res.send(dbUtils.getAllSkills());
+    dbUtils.getAllSkills( (all_skills) => {
+        res.send(all_skills);
+    });
 });
 
 /* ============================= START SERVER ============================== */

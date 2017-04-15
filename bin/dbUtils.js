@@ -5,22 +5,18 @@ const Profiles   = require('../models/profileModel'),
 
 
 module.exports = {
-    getAllSkills : function() {
+    getAllSkills : function(callback) {
         Profiles
             .find({}, 'skills')
             .exec()
-            .then( (skills_obj) => {
-                console.log("skills object: " + skills_obj);
+            .then( (db_skills) => {
                 var skill_list = [];
-                for (var skill_array in skills_obj) {
-                    console.log("skill array: " + skill_array);
-                    // skills_obj[skill_array].forEach( (skill) => {
-                    //     skill_list.push(skill);
-                    // });
-                    // console.log("skills:        " + skill_list);
-                    // console.log("sorted skills: " + skill_list.sort());
-                    return skill_list.sort();
-                }
+                db_skills.forEach( (user_skills) => {
+                  user_skills.skills.forEach( (skill) => {
+                    skill_list.push(skill);
+                  });
+                });
+                callback(skill_list.sort());
             })
             .catch( (err) => console.log('Error:', err));
     }
