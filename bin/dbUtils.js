@@ -22,8 +22,8 @@ module.exports = {
     },
 
     getSkillList : function(callback) {
+        var unique_skill_list = [];
         this.getAllSkills( (full_skill_list) => {
-            var unique_skill_list = [];
             full_skill_list.forEach( (skill) => {
                 if ( unique_skill_list.indexOf(skill) < 0 ) {
                     unique_skill_list.push(skill);
@@ -31,13 +31,25 @@ module.exports = {
             });
             callback(unique_skill_list.sort());
         });
+    },
+
+    countSkills : function(callback) {
+        var skill_tally = {};
+        this.getAllSkills( (full_skill_list) => {
+            full_skill_list.forEach( (skill) => {
+                if ( skill_tally[skill] === undefined ) {
+                    skill_tally[skill] = 1;
+                }
+                else {
+                    skill_tally[skill] += 1;
+                }
+            });
+            callback(skill_tally);
+        });            
     }
 
 }
 
-function countSkills() {
-  // return count(getAllSkills());
-}
 
 function repopulateSkills() {
   // push all skills in DB through the data dictionary

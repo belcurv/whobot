@@ -67,12 +67,6 @@ app.get('/auth', slack);
 // bot route
 app.post('/whobot', whobot);
 
-app.get('/skillz', (req, res) => {
-    dbUtils.getSkillList( (skills) => {
-        console.log(skills);
-        res.send(skills);
-    });
-});
 
 /* ============================= START SERVER ============================== */
 app.listen(port, function () {
