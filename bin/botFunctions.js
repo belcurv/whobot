@@ -251,7 +251,7 @@ function getMatchingProfiles(postBody, res) {
             .send(invalidRequest(postBody.user_name, 'missing requested skill.'));
     }
 
-    var parsedSkill  = parseSkill(postBody.postText),
+    var parsedSkill  = fetchSkill(postBody.postText),
         escapedSkill = escapeSkill(parsedSkill);
 
     // find documents where 'skill' in 'skills' and
@@ -259,7 +259,7 @@ function getMatchingProfiles(postBody, res) {
     Profiles
         .find({
             skills: {
-                $regex: new RegExp('^' + escapedSkill, 'i')
+                $regex: new RegExp('^' + escapedSkill + '$', 'i')
             },
             team_id: postBody.team_id
         })
@@ -319,7 +319,7 @@ function addProfile(postBody, res) {
                     // build updated, parsed, de-duplicated skills array
                     newSkills = buildSkills(newText);
 
-                console.log(newSkills);  // diag
+                // console.log(newSkills);  // diag
 
                 // update profile's properties
                 profile.postText = newText;
