@@ -45,12 +45,19 @@ module.exports = function (req, res, next) {
             BotFunctions.iKnow(postBody, res);
             break;
 
+        
         case /^forget me/gi.test(postBody.postText):
             // delete user's profile from database
             postBody.postText = req.body.text.substring(9);
             BotFunctions.forgetMe(postBody, res);
             break;
 
+        case /^forget/gi.test(postBody.postText):
+            // delete specified skill from user's profile
+            postBody.postText = req.body.text.substring(7);
+            BotFunctions.forgetSkill(postBody, res);
+            break;
+            
         default:
             // default response: show commands
             BotFunctions.help(postBody.user_name, res);

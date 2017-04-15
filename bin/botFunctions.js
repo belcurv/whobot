@@ -284,7 +284,7 @@ function getMatchingProfiles(postBody, res) {
 */
 function addProfile(postBody, res) {
     
-    // handle no skills listed
+    // handle no skill listed
     if (!postBody.postText || postBody.postText.length < 1) {
         let name = postBody.user_name,
             msg  = 'you need to include a list of skills.';
@@ -405,14 +405,113 @@ function deleteProfile(postBody, res) {
 }
 
 
+/* delete a skill from a user's profile
+ *
+ * @params   [object]   postBody   [the formatted Slack POST body]
+ * @params   [object]   res        [blank response object]
+ * @returns  [object]              [populated response object]
+*/
+function deleteSkill(postBody, res) {
+    
+    // handle no skill listed
+    if (!postBody.postText || postBody.postText.length < 1) {
+        let name = postBody.user_name,
+            msg  = 'you need to specify a skill.';
+        
+        return res
+            .status(400)
+            .send(invalidRequest(name, msg));
+    }
+    
+    var parsedSkill  = fetchSkill(postBody.postText),
+        escapedSkill = escapeSkill(parsedSkill);
+    
+    // target profile with user's team ID and user ID
+    var user = {
+            team_id: postBody.team_id,
+            user_id: postBody.user_id
+        };
+    
+    // find user profile, delete specified skill, and save
+    Profiles
+        .findOne(user)
+        .exec()
+        .then( (profile) =>  {
+        
+            // handle user not found
+            if (!profile) {
+                let msg = `I don't know you yet!`;
+                return res
+                    .status(400)
+                    .send(invalidRequest(postBody.user_name, msg));
+            }
+        
+            // handle skill not found
+            if ((profile.skills).indexOf(escapedSkill) === -1) {
+                let msg = `You don't know ${escapedSkill}!`;
+                return res
+                    .status(400)
+                    .send(invalidRequest(postBody.user_name, msg));
+            }
+        
+            // build updated skills list
+            let skills = (profile.skills).filter( (sk) => sk !== escapedSkill),
+                text   = skills.join(', ');
+        
+            // update profile's properties
+            profile.skills   = skills;
+            profile.postText = text;
+
+            // save the updated profile
+            profile.save( (err) => {
+                if (err) throw err;
+            });
+
+            // pass profile and the deleted skill to next 'then'
+            return {
+                profile      : profile,
+                escapedSkill : escapedSkill
+            };
+
+        })
+        .then( (profileObj) => {
+        
+            // then create response
+            let skill = profileObj.escapedSkill,
+                you   = profileObj.profile.user_name,
+                text  = `Thanks @${you} - *removed \`${skill}\` from your profile*.`,
+                count = profileObj.profile.skills.length,
+                data  = {
+                    'response_type': 'ephemeral',
+                    'attachments': [
+                        {
+                            'color'    : okColor,
+                            'text'     : text,
+                            'mrkdwn_in': ['text'],
+                            'footer'   : `You know ${count} skills.`
+                        }
+                    ]
+                };
+
+            return res
+                .status(200)
+                .send(data);
+        
+        })
+        .catch( (err) => console.log('Error:', err));
+    
+}
+
+
 /* =========================== expose public api =========================== */
 
 module.exports = {
     
-    help     : helpResponse,
-    whoIs    : getOneProfile,
-    whoKnows : getMatchingProfiles,
-    iKnow    : addProfile,
-    forgetMe : deleteProfile
+    help        : helpResponse,
+    whoIs       : getOneProfile,
+    whoKnows    : getMatchingProfiles,
+    iKnow       : addProfile,
+    forgetMe    : deleteProfile,
+    forgetSkill : deleteSkill
     
 };
