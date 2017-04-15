@@ -276,7 +276,7 @@ function getMatchingProfiles(postBody, res) {
 }
 
 
-/* add a user profile
+/* add or update a user's profile
  *
  * @params   [object]   postBody   [the formatted Slack POST body]
  * @params   [object]   res        [blank response object]
@@ -284,7 +284,7 @@ function getMatchingProfiles(postBody, res) {
 */
 function addProfile(postBody, res) {
     
-    // handle no skills
+    // handle no skills listed
     if (!postBody.postText || postBody.postText.length < 1) {
         let name = postBody.user_name,
             msg  = 'you need to include a list of skills.';
@@ -292,22 +292,55 @@ function addProfile(postBody, res) {
         return res
             .status(400)
             .send(invalidRequest(name, msg));
-    }    
+    }
     
-    // add 'skills' array property to POST body before saving
-    postBody.skills = buildSkills(postBody.postText);
+    // target profile with user's team ID and user ID
+    var user = {
+            team_id: postBody.team_id,
+            user_id: postBody.user_id
+        };
     
-    // do the work
-    Profiles.update(
-        { user_id : postBody.user_id },   // conditions
-        postBody,                         // doc
-        { upsert : true },                // options
-        function (err) {                  // callback
-            if (err) throw err;
-            
+    // find user profile. Create if not found, else update existing
+    Profiles
+        .findOne(user)
+        .exec()
+        .then( (profile) =>  {
+        
+            if (!profile) {
+                
+                postBody.skills = buildSkills(postBody.postText);
+                return Profiles.create(postBody);
+                
+            } else {
+
+                // build updated text property
+                let newText = `${(profile.skills).join(',')}, ${postBody.postText}`,
+
+                    // build updated, parsed, de-duplicated skills array
+                    newSkills = buildSkills(newText);
+
+                console.log(newSkills);  // diag
+
+                // update profile's properties
+                profile.postText = newText;
+                profile.skills   = newSkills;
+                
+                // save the updated profile
+                profile.save( (err) => {
+                    if (err) throw err;
+                });
+                
+                return profile;
+
+            }        
+
+        })
+        .then ( (profile) => {
+        
+            // then create response
             let you   = postBody.user_name,
                 time  = Date.parse(postBody.timestamp) / 1000,
-                count = postBody.skills.length,
+                count = profile.skills.length,
                 data  = {
                     'response_type': 'ephemeral',
                     'attachments': [
@@ -315,15 +348,18 @@ function addProfile(postBody, res) {
                             'color'    : okColor,
                             'text'     : `Thanks @${you} - *profile saved*.`,
                             'mrkdwn_in': ['text'],
-                            'footer'   : `Number of skills: ${count}`
+                            'footer'   : `You know ${count} skills.`
                         }
                     ]
-                };  
+                };
 
             return res
                 .status(200)
                 .send(data);
-        });
+        
+        })
+        .catch( (err) => console.log('Error:', err));
+    
 }
 
 
