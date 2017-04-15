@@ -43,7 +43,7 @@ function generateHelpResponse(you) {
                     }
                 ],
                 'mrkdwn_in': ['fields', 'text'],
-                'footer': `<https://whobot.herokuapp.com/ | whobot : v1.0.0> | <https://github.com/belcurv/whobot | GitHub>`
+                'footer': `<https://whobot.herokuapp.com/ | whobot : v1.1.0> | <https://github.com/belcurv/whobot | GitHub>`
             }
         ]
     };
