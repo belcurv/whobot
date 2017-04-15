@@ -8,7 +8,7 @@ var WhobotFooter = (function ($) {
     
     var DOM      = {},
         app     = 'whobot',
-        version  = '1.0.0',
+        version  = '1.1.0',
         repo     = 'https://github.com/belcurv/whobot',
         peter    = 'https://github.com/peterjmartinson/',
         jay      = 'https://github.com/belcurv/',
