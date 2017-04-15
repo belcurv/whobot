@@ -22,4 +22,17 @@ function getAllSkills() {
         .catch( (err) => console.log('Error:', err));
 }
 
+function getSkillList() {
+  // return removeDuplicates(getAllSkills());
+}
+
+function countSkills() {
+  // return count(getAllSkills());
+}
+
+function repopulateSkills() {
+  // push all skills in DB through the data dictionary
+}
+
+
 console.log(getAllSkills());
