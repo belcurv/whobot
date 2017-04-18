@@ -16,6 +16,7 @@
     "express": "^4.x.x",
     "mongoose": "^4.8.6",
     "morgan": "^1.8.1",
+    "node-schedule": "^1.2.1",
     "request": "^2.81.0"
   },
   "devDependencies": {},
