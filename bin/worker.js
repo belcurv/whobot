@@ -10,12 +10,30 @@
 
 */
 
-const schedule = require('node-schedule'),
-    dbUtils = require('./dbUtils'),
+const schedule    = require('node-schedule'),
+      dbUtils     = require('./dbUtils'),
+      dotenv      = require('dotenv').config(),
+      
+      // nodemailer
+      mailHost = process.env.EMAIL_HOST,
+      mailPort = process.env.EMAIL_PORT,
+      mailUser = process.env.EMAIL_USER,
+      mailPass = process.env.EMAIL_PASS,
+      nodeMailer  = require('nodemailer'),
+      smtpTransport = require('nodemailer-smtp-transport'),
+      transporter = nodeMailer.createTransport(smtpTransport({
+          host: mailHost,
+          port: mailPort,
+          auth: {
+              user: mailUser,
+              pass: mailPass
+          }
+      })),
+      
+      // db
+      db          = require('../db'),
+      mongoose    = require('mongoose');
 
-    // db
-    db = require('../db'),
-    mongoose = require('mongoose');
 
 /* ============================= CONNECT TO DB ============================= */
 
@@ -37,9 +55,70 @@ function buildTeamsList(data) {
 }
 
 
+function getSkills(teams) {
+    
+    return dbUtils.countSkills(function (results) {
+        
+        var keys = Object.keys(results),
+            
+            arr = keys.map((key) => [key, results[key]])
+                      .sort((a, b) => b[1] - a[1]);
+        
+        return {
+            teams : teams,
+            skills: arr
+        };
+        
+    });
+}
+
+
+function sendMail(data) {
+    
+    let htmlBody = [
+        '<b>Total teams: ' + data.teams.length + '</b>',
+        '<b>Teams: ' + data.teams.join(', ') + '</b>'
+    ].join('<br>');
+
+    let textBody = [
+        'Total teams: ' + data.teams.length,
+        'Teams: ' + data.teams.join(', ')
+    ].join('\n');
+
+    transporter.sendMail({
+        from: 'whobot@belcurv.com',
+        to  : 'jrschwane@uwalumni.com',
+        subject : 'Whobot Daily Stats',
+        html: htmlBody,
+        text: textBody
+    });
+}
+
+
 /* ============================== WORKER MAYBE ============================= */
 
 var worker = {
+    
+    mailStuff: function() {
+        
+        let getUsers = new Promise( (resolve, reject) => {
+            
+            return dbUtils.getAllUsers(function (users) {
+
+                var numUsers = users.length,
+                    teams    = buildTeamsList(users);
+
+                resolve(teams);
+
+            });
+            
+        });
+        
+        getUsers
+            .then( getSkills )
+            .then( sendMail );
+        
+    },
 
     scheduleJob: function () {
 
@@ -54,6 +133,9 @@ var worker = {
         var rule = '* * * * *';
 
         schedule.scheduleJob(rule, function () {
+            
+            /* testing mail stuff! */
+            worker.mailStuff();
 
             console.log([
                 '=========================================================',
