@@ -209,7 +209,7 @@ var worker = {
          *   every minute   : * * * * *
          *   every midnight : 0 0 * * *
          */
-        var rule = '* * * * *';
+        var rule = '0 0 * * *';
 
         schedule.scheduleJob(rule, function () {
             
