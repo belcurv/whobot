@@ -1,38 +1,24 @@
 /* jshint esversion:6, node:true */
 
-/*
-
-  WTF is this? Just testing Heroku workers
-  Based on: http://tinystride.com/notes/automate-stuff-on-a-server-with-a-dead-simple-node-worker/
-  
-  Goal: automate running of our stats utilities, emailing data to us via MailChimp API
-  http://developer.mailchimp.com/documentation/mailchimp/
-
-*/
-
-const schedule    = require('node-schedule'),
-      dbUtils     = require('./dbUtils'),
-      dotenv      = require('dotenv').config(),
+const schedule = require('node-schedule'),
+      dbUtils  = require('./dbUtils'),
+      dotenv   = require('dotenv').config(),
       
-      // nodemailer
-      mailHost = process.env.EMAIL_HOST,
-      mailPort = process.env.EMAIL_PORT,
-      mailUser = process.env.EMAIL_USER,
-      mailPass = process.env.EMAIL_PASS,
-      nodeMailer  = require('nodemailer'),
+      // nodemailer setup
+      nodeMailer    = require('nodemailer'),
       smtpTransport = require('nodemailer-smtp-transport'),
-      transporter = nodeMailer.createTransport(smtpTransport({
-          host: mailHost,
-          port: mailPort,
+      transporter   = nodeMailer.createTransport(smtpTransport({
+          host: process.env.EMAIL_HOST,
+          port: process.env.EMAIL_PORT,
           auth: {
-              user: mailUser,
-              pass: mailPass
+              user: process.env.EMAIL_USER,
+              pass: process.env.EMAIL_PASS
           }
       })),
       
       // db
-      db          = require('../db'),
-      mongoose    = require('mongoose');
+      db       = require('../db'),
+      mongoose = require('mongoose');
 
 
 /* ============================= CONNECT TO DB ============================= */
@@ -43,133 +29,198 @@ mongoose.Promise = global.Promise;
 
 /* ============================ UTILITY METHODS ============================ */
 
+/* Builds array of team objects
+ *
+ * @params    [object]   data   [raw database array of users]
+ * @returns   [array]           [array team names & attributes]
+*/
 function buildTeamsList(data) {
     
-    var seen = {};
+    var seen  = {},
+        teams = data
+            .map( (u) => u.team )
+            .filter( (i) => seen.hasOwnProperty(i) ? false : (seen[i] = true) )
+            .map( (team) => {
+        
+                let userCount  = 0,
+                    skillCount = 0;
 
-    // de-dupelicate teams
-    return data
-        .map( (u) => u.team )
-        .filter( (i) => seen.hasOwnProperty(i) ? false : (seen[i] = true) );
+                data.forEach( (u) => {
+
+                    if (u.team === team) {
+                        userCount += 1;
+                        skillCount += u.skills.length;
+                    }
+
+                });
+
+                return {
+                    team_domain  : team,
+                    total_users  : userCount,
+                    total_skills : skillCount
+                };
+            });
+    
+    return teams;
 
 }
 
 
-function getSkills(teams) {
+/* Builds structured list of skills & counts
+ *
+ * @params    [object]   data   [raw database array of users]
+ * @returns   [array]           [nested array of skill names & counts]
+*/
+function buildSkillsList(data) {
     
-    return dbUtils.countSkills(function (results) {
+    var skillsTotals = {},
+        allSkills = data
+            .map( (el) => el.skills )
+            .reduce( (acc, el) => acc.concat(el), [] );
+    
+    allSkills.forEach((skill) => {
+        if (skillsTotals[skill] === undefined) {
+            skillsTotals[skill] = 1;
+        } else {
+            skillsTotals[skill] += 1;
+        }
+    });
+    
+    return Object.keys(skillsTotals)
+        .map( (key) => [key, skillsTotals[key]] )
+        .sort( (a, b) => b[1] - a[1]);
+
+}
+
+
+/* Manage building of teams and skills lists
+ *
+ * @params    [object]   data   [raw database array of users]
+ * @returns   [object]          [propertly structured object]
+*/
+function buildLists(data) {
+    
+    return {
+        teams  : buildTeamsList(data),
+        skills : buildSkillsList(data)
+    };
+
+}
+
+
+/* Format message content sections
+ *
+ * @params    [object]   data   [object containing teams and skills lists]
+ * @returns   [object]          [object of prepared html message content]
+*/
+function formatContent(data) {
+    
+    var header,
+        teamsContent  = '<b>========== ALL TEAMS ===========</b><br>',
+        skillsContent = '<b>========== ALL SKILLS ==========</b><br>',
+        teams  = data.teams,
+        skills = data.skills;
+    
+    header = `<h3>Skill stats as of ${(new Date()).toDateString()}</h3>`;
+    
+    // build teams section
+    data.teams.forEach( (team) => {
         
-        var keys = Object.keys(results),
-            
-            arr = keys.map((key) => [key, results[key]])
-                      .sort((a, b) => b[1] - a[1]);
+        let message = [
+            '<b>Team: ' + team.team_domain + '</b>',
+            'Team Members: ' + team.total_users,
+            'Total Skills: ' + team.total_skills
+        ].join('<br>');
         
-        return {
-            teams : teams,
-            skills: arr
-        };
+        teamsContent += message + '<br><br>';
         
     });
+    
+    // build skills section
+    data.skills.forEach( (skill) => {
+        
+        let message = `${skill[0]}: ${skill[1]}<br>`;
+        skillsContent += message;
+        
+    });
+    
+    return {
+        header        : header,
+        teamsContent  : teamsContent,
+        skillsContent : skillsContent
+    };
 }
 
 
-function sendMail(data) {
+/* Prepare and send the mail message
+ *
+ * @params   [object]   message   [formatted message content object]
+*/
+function sendMail(message) {
     
     let htmlBody = [
-        '<b>Total teams: ' + data.teams.length + '</b>',
-        '<b>Teams: ' + data.teams.join(', ') + '</b>'
+        message.header,
+        message.teamsContent,
+        message.skillsContent
     ].join('<br>');
 
     let textBody = [
-        'Total teams: ' + data.teams.length,
-        'Teams: ' + data.teams.join(', ')
+        message.header,
+        message.teamsContent,
+        message.skillsContent
     ].join('\n');
 
     transporter.sendMail({
-        from: 'whobot@belcurv.com',
-        to  : 'jrschwane@uwalumni.com',
-        subject : 'Whobot Daily Stats',
-        html: htmlBody,
-        text: textBody
+        from    : 'whobot@belcurv.com',
+        to      : 'jrschwane@uwalumni.com',
+        cc      : 'peter.j.martinson@gmail.com', // 'chinguftw@gmail.com',
+        subject : `Whobot Daily Stats - ${(new Date()).toDateString()}`,
+        html    : htmlBody,
+        text    : textBody
     });
+    
 }
 
 
-/* ============================== WORKER MAYBE ============================= */
+/* ================================ WORKER ================================= */
 
 var worker = {
     
+    /* Collect chained operations together
+     *   'dbUtils' from > bin/dbutils.js
+     *   'getAllUsers()' returns a promise object
+    */
     mailStuff: function() {
         
-        let getUsers = new Promise( (resolve, reject) => {
-            
-            return dbUtils.getAllUsers(function (users) {
-
-                var numUsers = users.length,
-                    teams    = buildTeamsList(users);
-
-                resolve(teams);
-
-            });
-            
-        });
-        
-        getUsers
-            .then( getSkills )
+        dbUtils.getAllUsers()
+            .then( buildLists )
+            .then( formatContent )
             .then( sendMail );
-        
     },
 
+
+    /* Sets up the node-schedule scheduler
+    */
     scheduleJob: function () {
 
-        /* rules
+        /* rules follow traditional cron syntax
          *
          * See http://stackoverflow.com/a/5398044/1252653
-         *
-         *   every minute:  * * * * *
-         *   every midnight: 0 0 * * *
-         *
+         *   every minute   : * * * * *
+         *   every midnight : 0 0 * * *
          */
-        var rule = '* * * * *';
+        var rule = '0 0 * * *';
 
         schedule.scheduleJob(rule, function () {
             
-            /* testing mail stuff! */
             worker.mailStuff();
-
-            console.log([
-                '=========================================================',
-                `Skill stats as of ${new Date()}`,
-                '========================================================='
-            ].join('\n'));
-
-
-            dbUtils.getAllUsers(function (users) {
-
-                var numUsers = users.length,
-                    teams    = buildTeamsList(users);
-
-                console.log(`Total teams: ${teams.length}`);
-                console.log(`Teams: ${teams.join(', ')}`);
-
-            });
-
-
-            dbUtils.countSkills(function (results) {
-
-                var keys = Object.keys(results),
-
-                    arr = keys.map((key) => [key, results[key]])
-                    .sort((a, b) => b[1] - a[1]);
-
-                console.log(`\nSkills:\n - ${arr.join('\n - ')}`);
-
-            });
 
         });
 
     },
 
+    /* main init method
+    */
     init: function () {
 
         this.scheduleJob();
@@ -181,5 +232,6 @@ var worker = {
 (function () {
 
     worker.init();
+//     worker.mailStuff();
 
 }());
