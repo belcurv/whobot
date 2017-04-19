@@ -174,7 +174,7 @@ function sendMail(message) {
     transporter.sendMail({
         from    : 'whobot@belcurv.com',
         to      : 'jrschwane@uwalumni.com',
-        cc      : 'peter.j.martinson@gmail.com', // 'chinguftw@gmail.com',
+//        cc      : 'peter.j.martinson@gmail.com', // 'chinguftw@gmail.com',
         subject : `Whobot Daily Stats - ${(new Date()).toDateString()}`,
         html    : htmlBody,
         text    : textBody
@@ -208,9 +208,10 @@ var worker = {
          *
          * See http://stackoverflow.com/a/5398044/1252653
          *   every minute   : * * * * *
+         *   every hour     : 0 * * * *
          *   every midnight : 0 0 * * *
          */
-        var rule = '0 0 * * *';
+        var rule = '0 * * * *';
 
         schedule.scheduleJob(rule, function () {
             
