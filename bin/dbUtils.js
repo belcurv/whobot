@@ -6,20 +6,20 @@ const Profiles = require('../models/profileModel'),
 
 module.exports = {
 
-    getAllUsers: function (callback) {
-        Profiles
+    getAllUsers: function () {
+        return Profiles
             .find({})
             .exec()
             .then( (users) => {
                 
-                var list = users.map( (u) => {
+                return users.map( (u) => {
                     return {
                         name: u.user_name,
                         team: u.team_domain,
+                        skills: u.skills,
                         count: (u.skills).length
                     };
                 });
-                callback(list);
             });
 
     },
