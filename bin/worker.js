@@ -117,18 +117,20 @@ function buildLists(data) {
 function formatContent(data) {
     
     var header,
-        teamsContent  = '<b>========== ALL TEAMS ===========</b><br>',
-        skillsContent = '<b>========== ALL SKILLS ==========</b><br>',
+        teamsContent  = `<div style="background: #ddd; margin: 0; "><h4 style="margin-top: 0; margin-right: -1em; margin-bottom: .5em; margin-left: -1em; padding: .5em 1em; background-color: #08a; color: white; height: 1em; line-height: 1em;">Teams</h4><div style="padding-left: 1em;">`,
+        
+        skillsContent = `<div style="background: #ddd; margin: 0; "><h4 style="margin-top: 0; margin-right: -1em; margin-bottom: .5em; margin-left: -1em; padding: .5em 1em; background-color: #08a; color: white; height: 1em; line-height: 1em;">Skills</h4><div style="padding-left: 1em;">`,
+        
         teams  = data.teams,
         skills = data.skills;
     
-    header = `<h3>Skill stats as of ${(new Date()).toDateString()}</h3>`;
+    header = `<h3 style="margin: 0; background-color: #333; color: white; height: 2em; line-height: 2em; text-align: center;">Skill stats as of ${(new Date()).toDateString()}</h3>`;
     
     // build teams section
     data.teams.forEach( (team) => {
         
         let message = [
-            '<b>Team: ' + team.team_domain + '</b>',
+            `<b>Team: ${team.team_domain}</b>`,
             'Team Members: ' + team.total_users,
             'Total Skills: ' + team.total_skills
         ].join('<br>');
@@ -160,10 +162,12 @@ function formatContent(data) {
 function sendMail(message) {
     
     let htmlBody = [
+        `<div style="font-family: sans-serif;">`,
         message.header,
-        message.teamsContent,
-        message.skillsContent
-    ].join('<br>');
+        message.teamsContent, '</div></div>',
+        message.skillsContent, '</div></div>',
+        '</div>'
+    ].join('');
 
     let textBody = [
         message.header,
@@ -174,7 +178,7 @@ function sendMail(message) {
     transporter.sendMail({
         from    : 'whobot@belcurv.com',
         to      : 'jrschwane@uwalumni.com',
-//        cc      : 'peter.j.martinson@gmail.com', // 'chinguftw@gmail.com',
+        cc      : ['peter.j.martinson@gmail.com', 'chinguftw@gmail.com'],
         subject : `Whobot Daily Stats - ${(new Date()).toDateString()}`,
         html    : htmlBody,
         text    : textBody
