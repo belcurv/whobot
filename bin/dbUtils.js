@@ -162,18 +162,23 @@ function paddedArray(skill_obj) {
  * @returns   [object]            [Slack response]
 */
 function formatResponse(team_name, output) {
-    let okColor    = '#008080',
-        data   = {
-        'response_type': 'ephemeral',
-        'attachments': [
-            {
-                'color'     : okColor,
-                'title'     : `Skill Statistics for Team: ${team_name}`,
-                'text'      : '```' + output + '```',
-                'mrkdwn_in' : ['text']
-            }
-        ]
-    };
+    let okColor = '#008080',
+        data    = {
+            'response_type' : 'ephemeral',
+            'attachments'   : [
+                {
+                    'color' : okColor,
+                    'fields': [
+                        {
+                            'title' : `Skill Statistics for Team: ${team_name}`,
+                            'value' : '```' + output + '```',
+                            'short' : false
+                        }
+                    ],                
+                    'mrkdwn_in' : ['text', 'fields']
+                }
+            ]
+        };
     return data;
 }
 
