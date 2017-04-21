@@ -45,10 +45,15 @@ function generateHelpResponse(you) {
                         'title': '5. Erase yourself from Whobot\'s memory:',
                         'value': '```/whobot forget me```',
                         'short': false
+                    },
+                    {
+                        'title': '6. Display statistics about your team:',
+                        'value': '```/whobot statistics```',
+                        'short': false
                     }
                 ],
                 'mrkdwn_in': ['fields', 'text'],
-                'footer': `<https://whobot.herokuapp.com/ | whobot : v1.1.0> | <https://github.com/belcurv/whobot | GitHub>`
+                'footer': `<https://belcurv.github.io/whobot-landing/ | whobot : v1.2.0> | <https://github.com/belcurv/whobot | GitHub>`
             }
         ]
     };
