@@ -1,7 +1,8 @@
 /* bin/whobot.js */
 /* jshint node: true, esversion:6 */
 
-var BotFunctions = require('./botFunctions.js');
+var BotFunctions = require('./botFunctions.js'),
+    dbUtils      = require('./dbUtils.js');
 
 module.exports = function (req, res, next) {
     
@@ -56,6 +57,12 @@ module.exports = function (req, res, next) {
             // delete specified skill from user's profile
             postBody.postText = req.body.text.substring(7);
             BotFunctions.forgetSkill(postBody, res);
+            break;
+
+        case /^statistics/gi.test(postBody.postText):
+            // delete specified skill from user's profile
+            postBody.postText = req.body.text.substring(11);
+            dbUtils.chartSkills(res);
             break;
             
         default:

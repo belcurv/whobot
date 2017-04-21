@@ -26,10 +26,6 @@ const express    = require('express'),
       // Slack auth
       slack      = require('./slack'),
 
-      // Utilities
-      dbUtils    = require('./bin/dbUtils');
-
-
 /* ============================== MIDDLEWARE =============================== */
 
 // logging
@@ -66,7 +62,6 @@ app.get('/auth', slack);
 
 // bot route
 app.post('/whobot', whobot);
-
 
 /* ============================= START SERVER ============================== */
 app.listen(port, function () {
