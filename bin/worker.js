@@ -176,9 +176,9 @@ function sendMail(message) {
     ].join('\n');
 
     transporter.sendMail({
-        from    : 'whobot@belcurv.com',
-        to      : 'jrschwane@uwalumni.com',
-        cc      : ['peter.j.martinson@gmail.com', 'chinguftw@gmail.com'],
+        from    : process.env.EMAIL_USER,
+        to      : process.env.JMAIL,
+        cc      : [process.env.PMAIL, process.env.CMAIL],
         subject : `Whobot Daily Stats - ${(new Date()).toDateString()}`,
         html    : htmlBody,
         text    : textBody
