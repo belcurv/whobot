@@ -24,9 +24,13 @@ module.exports = {
 
     },
 
-    getAllSkills: function (callback) {
+    /* return all skills from database
+     *
+     * @returns   [array]    [array of skills]
+    */
+    getAllSkills : function(team_id, callback) {
         Profiles
-            .find({}, 'skills')
+            .find({team_id: team_id}, 'skills')
             .exec()
             .then((db_skills) => {
                 var skill_list = [];
@@ -40,7 +44,11 @@ module.exports = {
             .catch((err) => console.log('Error:', err));
     },
 
-    getSkillList: function (callback) {
+    /* return list of unique skills from database
+     *
+     * @returns   [array]    [deduplicated list of skills]
+    */
+    getSkillList : function(callback) {
         var unique_skill_list = [];
         this.getAllSkills((full_skill_list) => {
             full_skill_list.forEach((skill) => {
@@ -52,9 +60,13 @@ module.exports = {
         });
     },
 
-    countSkills: function (callback) {
+    /* count number of users with each skill in database
+     *
+     * @returns   [object]    [ {skill : # of users} ]
+    */
+    countSkills : function(team_id, callback) {
         var skill_tally = {};
-        this.getAllSkills((full_skill_list) => {
+        this.getAllSkills(team_id, (full_skill_list) => {
             full_skill_list.forEach((skill) => {
                 if (skill_tally[skill] === undefined) {
                     skill_tally[skill] = 1;
@@ -63,11 +75,107 @@ module.exports = {
                 }
             });
             callback(skill_tally);
+        });            
+    },
+
+    /* generate a skill histogram
+     *
+     * @returns   [string]    [ascii histogram of skill occurrences]
+    */
+    chartSkills : function(postBody, res) {
+        var team_id = postBody.team_id,
+            team_name = postBody.team_domain,
+            skill_index = 0,
+            chart_index = 0,
+            chart = [],
+            chart_output = '',
+            stat, j,
+            padded_skills;
+
+        this.countSkills(team_id, function(skill_obj) {
+            padded_skills = paddedArray(skill_obj);
+            for ( stat in skill_obj ) {
+                if ( skill_obj[stat] ) {
+                    chart.push(padded_skills[skill_index]);
+                    chart[chart_index] += ': ';
+                    for ( j = 0; j < skill_obj[stat]; j++ ) {
+                        chart[chart_index] += '#';
+                    }
+                    chart_index++;
+                }
+                skill_index++;
+            }
+
+            chart = chart.sort(function(a,b) { return b.length - a.length; });
+            chart.forEach( function(element) {
+              chart_output += element + '\n';
+            });
+
+            res.status(200).send(formatResponse(team_name, chart_output));
         });
     }
-
 };
 
+/* return an array of equal-length strings
+ *
+ * @params    [object]   skill_obj   [ { skill : # of users } ]
+ * @returns   [array]                [length-normalized strings]
+*/
+function paddedArray(skill_obj) {
+    var max_length = 0,
+        string_array = [],
+        pad, skill_stat, pad_length, i, j;
+
+    // populate skills array, find longest skill name
+    for ( var skill in skill_obj ) {
+        if ( max_length < skill.length ) {
+            max_length = skill.length;
+        }
+        string_array.push(skill);
+    }
+
+    // pad each skill in array to max_length characters
+    for ( i = 0; i < string_array.length; i++ ) {
+        skill_stat = skill_obj[string_array[i]];
+        pad = '';
+        pad_length = max_length - string_array[i].length;
+
+        for ( j = 0; j < pad_length; j++ ) {
+            pad += ' ';
+        }
+        string_array[i] += pad + ' ';
+
+        // append the number of users per skill
+        if ( skill_stat < 10 ) {
+          string_array[i] += '( ' + skill_stat + ') ';
+        }
+        else {
+          string_array[i] += '(' + skill_stat + ') ';
+        }
+    }
+    return string_array;   
+}
+
+/* generate a Slack response histogram
+ *
+ * @params    [string]   output   [string-formatted histogram]
+ * @returns   [object]            [Slack response]
+*/
+function formatResponse(team_name, output) {
+    let okColor    = '#008080',
+        data   = {
+        'response_type': 'ephemeral',
+        'attachments': [
+            {
+                'color'     : okColor,
+                'title'     : `Skill Statistics for Team: ${team_name}`,
+                'text'      : '```' + output + '```',
+                'mrkdwn_in' : ['text']
+            }
+        ]
+    };
+    return data;
+}
 
 function repopulateSkills() {
     // push all skills in DB through the data dictionary

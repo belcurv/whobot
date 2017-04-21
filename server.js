@@ -24,11 +24,7 @@ const express    = require('express'),
       whobot     = require('./bin/whobot'),
       
       // Slack auth
-      slack      = require('./slack'),
-
-      // Utilities
-      dbUtils    = require('./bin/dbUtils');
-
+      slack      = require('./slack');
 
 /* ============================== MIDDLEWARE =============================== */
 
@@ -66,7 +62,6 @@ app.get('/auth', slack);
 
 // bot route
 app.post('/whobot', whobot);
-
 
 /* ============================= START SERVER ============================== */
 app.listen(port, function () {
