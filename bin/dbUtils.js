@@ -166,7 +166,7 @@ function formatResponse (output) {
         'attachments': [
             {
                 'color'     : okColor,
-                'title'     : '========================\n       Statistics       \n========================',
+                'title'     : '========================\nStatistics       \n========================',
                 'text'      : '```' + output + '```',
                 'mrkdwn_in' : ['text']
             }
