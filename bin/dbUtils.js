@@ -1,11 +1,28 @@
 /* jshint esversion:6, node:true */
 
 const Profiles   = require('../models/profileModel'),
-      fetchSkill = require('./fetchSkill'),
-      okColor    = '#008080';
+      fetchSkill = require('./fetchSkill');
 
 
 module.exports = {
+
+    getAllUsers: function () {
+        return Profiles
+            .find({})
+            .exec()
+            .then( (users) => {
+                
+                return users.map( (u) => {
+                    return {
+                        name: u.user_name,
+                        team: u.team_domain,
+                        skills: u.skills,
+                        count: (u.skills).length
+                    };
+                });
+            });
+
+    },
 
     /* return all skills from database
      *
@@ -33,9 +50,9 @@ module.exports = {
     */
     getSkillList : function(callback) {
         var unique_skill_list = [];
-        this.getAllSkills( (full_skill_list) => {
-            full_skill_list.forEach( (skill) => {
-                if ( unique_skill_list.indexOf(skill) < 0 ) {
+        this.getAllSkills((full_skill_list) => {
+            full_skill_list.forEach((skill) => {
+                if (unique_skill_list.indexOf(skill) < 0) {
                     unique_skill_list.push(skill);
                 }
             });
@@ -49,12 +66,11 @@ module.exports = {
     */
     countSkills : function(callback) {
         var skill_tally = {};
-        this.getAllSkills( (full_skill_list) => {
-            full_skill_list.forEach( (skill) => {
-                if ( skill_tally[skill] === undefined ) {
+        this.getAllSkills((full_skill_list) => {
+            full_skill_list.forEach((skill) => {
+                if (skill_tally[skill] === undefined) {
                     skill_tally[skill] = 1;
-                }
-                else {
+                } else {
                     skill_tally[skill] += 1;
                 }
             });
