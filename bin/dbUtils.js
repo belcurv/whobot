@@ -82,7 +82,7 @@ module.exports = {
      *
      * @returns   [string]    [ascii histogram of skill occurrences]
     */
-    chartSkills : function(callback) {
+    chartSkills : function(res) {
         var skill_index = 0,
             chart_index = 0,
             chart = [],
@@ -109,7 +109,7 @@ module.exports = {
               chart_output += element + '\n';
             });
 
-            callback(formatResponse(chart_output));
+            res.status(200).send(formatResponse(chart_output));
         });
     }
 };
@@ -122,7 +122,7 @@ module.exports = {
 function paddedArray(skill_obj) {
     var max_length = 0,
         string_array = [],
-        pad, skill, skill_stat, pad_length, i, j;
+        pad, skill_stat, pad_length, i, j;
 
     // populate skills array, find longest skill name
     for ( var skill in skill_obj ) {
@@ -160,13 +160,14 @@ function paddedArray(skill_obj) {
  * @returns   [object]            [Slack response]
 */
 function formatResponse (output) {
-    let data   = {
+    let okColor    = '#008080',
+        data   = {
         'response_type': 'ephemeral',
         'attachments': [
             {
                 'color'     : okColor,
                 'title'     : '========================\n       Statistics       \n========================',
-                'text'      : output,
+                'text'      : '```' + output + '```',
                 'mrkdwn_in' : ['text']
             }
         ]
