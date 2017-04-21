@@ -170,7 +170,7 @@ function formatResponse(team_name, output) {
                     'color' : okColor,
                     'fields': [
                         {
-                            'title' : `Skill Statistics for Team: ${team_name}`,
+                            'title' : `Skill Statistics for: ${team_name}`,
                             'value' : '```' + output + '```',
                             'short' : false
                         }
