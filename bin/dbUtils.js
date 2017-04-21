@@ -28,9 +28,9 @@ module.exports = {
      *
      * @returns   [array]    [array of skills]
     */
-    getAllSkills : function(callback) {
+    getAllSkills : function(team_id, callback) {
         Profiles
-            .find({}, 'skills')
+            .find({team_id: team_id}, 'skills')
             .exec()
             .then((db_skills) => {
                 var skill_list = [];
@@ -64,9 +64,9 @@ module.exports = {
      *
      * @returns   [object]    [ {skill : # of users} ]
     */
-    countSkills : function(callback) {
+    countSkills : function(team_id, callback) {
         var skill_tally = {};
-        this.getAllSkills((full_skill_list) => {
+        this.getAllSkills(team_id, (full_skill_list) => {
             full_skill_list.forEach((skill) => {
                 if (skill_tally[skill] === undefined) {
                     skill_tally[skill] = 1;
@@ -82,15 +82,17 @@ module.exports = {
      *
      * @returns   [string]    [ascii histogram of skill occurrences]
     */
-    chartSkills : function(res) {
-        var skill_index = 0,
+    chartSkills : function(postBody, res) {
+        var team_id = postBody.team_id,
+            team_name = postBody.team_domain,
+            skill_index = 0,
             chart_index = 0,
             chart = [],
             chart_output = '',
             stat, j,
             padded_skills;
 
-        this.countSkills( function(skill_obj) {
+        this.countSkills(team_id, function(skill_obj) {
             padded_skills = paddedArray(skill_obj);
             for ( stat in skill_obj ) {
                 if ( skill_obj[stat] ) {
@@ -109,7 +111,7 @@ module.exports = {
               chart_output += element + '\n';
             });
 
-            res.status(200).send(formatResponse(chart_output));
+            res.status(200).send(formatResponse(team_name, chart_output));
         });
     }
 };
@@ -159,14 +161,14 @@ function paddedArray(skill_obj) {
  * @params    [string]   output   [string-formatted histogram]
  * @returns   [object]            [Slack response]
 */
-function formatResponse (output) {
+function formatResponse(team_name, output) {
     let okColor    = '#008080',
         data   = {
         'response_type': 'ephemeral',
         'attachments': [
             {
                 'color'     : okColor,
-                'title'     : '========================\n       Statistics       \n========================',
+                'title'     : `Skill Statistics for Team: ${team_name}`,
                 'text'      : '```' + output + '```',
                 'mrkdwn_in' : ['text']
             }

@@ -62,7 +62,7 @@ module.exports = function (req, res, next) {
         case /^statistics/gi.test(postBody.postText):
             // delete specified skill from user's profile
             postBody.postText = req.body.text.substring(11);
-            dbUtils.chartSkills(res);
+            dbUtils.chartSkills(postBody, res);
             break;
             
         default:
