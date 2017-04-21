@@ -14,7 +14,7 @@ function authRouteHandler(req, res) {
     
     // on oauth fail
     if (!req.query.code) {
-        res.redirect('https://whobot.herokuapp.com/');
+        res.redirect('https://belcurv.github.io/whobot-landing/');
         return;
     }
 

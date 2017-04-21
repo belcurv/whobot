@@ -9,7 +9,6 @@
 /* ================================= SETUP ================================= */
 const express    = require('express'),
       app        = express(),
-      path       = require('path'),
       port       = process.env.PORT || 3000,
 
       // middleware
@@ -35,9 +34,6 @@ app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// for serving static client app
-app.use(express.static(path.join(__dirname, 'public')));
-
 // error handler
 app.use(function (err, req, res, next) {
     console.log('Error: ', err.stack);
@@ -51,11 +47,6 @@ mongoose.Promise = global.Promise;
 
 
 /* ================================ ROUTES ================================= */
-
-// return public landing page
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/index.html'));
-});
 
 // Slack authentication route
 app.get('/auth', slack);
