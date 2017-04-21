@@ -24,7 +24,7 @@ const express    = require('express'),
       whobot     = require('./bin/whobot'),
       
       // Slack auth
-      slack      = require('./slack'),
+      slack      = require('./slack');
 
 /* ============================== MIDDLEWARE =============================== */
 
