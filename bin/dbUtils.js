@@ -165,12 +165,13 @@ function formatResponse(team_name, output) {
     let okColor = '#008080',
         data    = {
             'response_type' : 'ephemeral',
+            "text": "*Skill Statistics for: chingu-rhinos*",
             'attachments'   : [
                 {
                     'color' : okColor,
                     'fields': [
                         {
-                            'title' : `Skill Statistics for: ${team_name}`,
+//                            'title' : `Skill Statistics for: ${team_name}`,
                             'value' : '```' + output + '```',
                             'short' : false
                         }
