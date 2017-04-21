@@ -1,7 +1,7 @@
 /* jshint esversion:6, node:true */
 
-const Profiles   = require('../models/profileModel'),
-      fetchSkill = require('./fetchSkill');
+const Profiles = require('../models/profileModel'),
+    fetchSkill = require('./fetchSkill');
 
 
 module.exports = {
@@ -32,16 +32,16 @@ module.exports = {
         Profiles
             .find({}, 'skills')
             .exec()
-            .then( (db_skills) => {
+            .then((db_skills) => {
                 var skill_list = [];
-                db_skills.forEach( (user_skills) => {
-                  user_skills.skills.forEach( (skill) => {
-                    skill_list.push(skill);
-                  });
+                db_skills.forEach((user_skills) => {
+                    user_skills.skills.forEach((skill) => {
+                        skill_list.push(skill);
+                    });
                 });
                 callback(skill_list.sort());
             })
-            .catch( (err) => console.log('Error:', err));
+            .catch((err) => console.log('Error:', err));
     },
 
     /* return list of unique skills from database
@@ -175,7 +175,5 @@ function formatResponse (output) {
 }
 
 function repopulateSkills() {
-  // push all skills in DB through the data dictionary
+    // push all skills in DB through the data dictionary
 }
-
-
