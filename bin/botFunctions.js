@@ -154,7 +154,7 @@ function buildSkills(skills) {
     var seen = {};
     
     return skills
-        .replace(/^{|}$/gm, '')    // remove enclosing {curly braces}
+        .replace(/{|}|<|>/gm, '')  // remove braces
         .split(',')                // make array
         .map( (s) => s.replace(/\band\b/g, '') )  // remove any 'and'
         .filter( (s) => /\S/.test(s) )            // remove whitespace elements
