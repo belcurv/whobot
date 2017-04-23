@@ -157,6 +157,7 @@ function buildSkills(skills) {
         .replace(/^{|}$/gm, '')    // remove enclosing {curly braces}
         .split(',')                // make array
         .map( (s) => s.replace(/\band\b/g, '') )  // remove any 'and'
+        .filter( (s) => /\S/.test(s) )            // remove whitespace elements
         .map( (e) => fetchSkill(e.trim()) )       // trim and normalize
         .filter( (i) => seen.hasOwnProperty(i) ? false : (seen[i] = true) );  // de-dupe
 }
