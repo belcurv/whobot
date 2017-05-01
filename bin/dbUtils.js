@@ -107,8 +107,10 @@ module.exports = {
             }
 
             chart = chart.sort(function(a,b) { return b.length - a.length; });
-            chart.forEach( function(element) {
-              chart_output += element + '\n';
+            chart.forEach( function(element, index) {
+              if (index < 20) {
+                chart_output += element + '\n';
+              }
             });
 
             res.status(200).send(formatResponse(team_name, chart_output));
@@ -170,7 +172,7 @@ function formatResponse(team_name, output) {
                     'color' : okColor,
                     'fields': [
                         {
-                            'title' : `Skill Statistics for: ${team_name}`,
+                            'title' : `Top 20 Skills for: ${team_name}`,
                             'value' : '```' + output + '```',
                             'short' : false
                         }
