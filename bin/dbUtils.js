@@ -1,7 +1,7 @@
 /* jshint esversion:6, node:true */
 
-const Profiles = require('../models/profileModel'),
-    fetchSkill = require('./fetchSkill');
+const Profiles   = require('../models/profileModel'),
+      fetchSkill = require('./fetchSkill');
 
 
 module.exports = {
@@ -11,8 +11,8 @@ module.exports = {
             .find({})
             .exec()
             .then( (users) => {
-                
-                return users.map( (u) => {
+
+                return users.map((u) => {
                     return {
                         name: u.user_name,
                         team: u.team_domain,
@@ -75,7 +75,7 @@ module.exports = {
                 }
             });
             callback(skill_tally);
-        });            
+        });
     },
 
     /* generate a skill histogram
@@ -92,13 +92,24 @@ module.exports = {
             stat, j,
             padded_skills;
 
-        this.countSkills(team_id, function(skill_obj) {
-            padded_skills = paddedArray(skill_obj);
-            for ( stat in skill_obj ) {
-                if ( skill_obj[stat] ) {
+        this.countSkills(team_id, function (skill_obj) {
+
+            var filtered_skill_obj = {};
+
+            // copy properties from `skill_obj` to `filtered_skill_obj` if  value > 1
+            for (let skill in skill_obj) {
+                if (skill_obj[skill] > 1) {
+                    filtered_skill_obj[skill] = skill_obj[skill];
+                }
+            }
+
+            padded_skills = paddedArray(filtered_skill_obj);
+            
+            for (stat in filtered_skill_obj) {
+                if (filtered_skill_obj[stat]) {
                     chart.push(padded_skills[skill_index]);
                     chart[chart_index] += ': ';
-                    for ( j = 0; j < skill_obj[stat]; j++ ) {
+                    for (j = 0; j < filtered_skill_obj[stat]; j++) {
                         chart[chart_index] += '#';
                     }
                     chart_index++;
@@ -107,11 +118,12 @@ module.exports = {
             }
 
             chart = chart.sort(function(a,b) { return b.length - a.length; });
-            chart.forEach( function(element) {
-              chart_output += element + '\n';
+            
+            chart.forEach( function (element) {
+                chart_output += element + '\n';
             });
 
-            res.status(200).send(formatResponse(team_name, chart_output));
+            res.status(200).send(formatResponse(team_name, chart_output, chart.length));
         });
     }
 };
@@ -135,7 +147,7 @@ function paddedArray(skill_obj) {
     }
 
     // pad each skill in array to max_length characters
-    for ( i = 0; i < string_array.length; i++ ) {
+    for  (i = 0; i < string_array.length; i++ ) {
         skill_stat = skill_obj[string_array[i]];
         pad = '';
         pad_length = max_length - string_array[i].length;
@@ -147,13 +159,12 @@ function paddedArray(skill_obj) {
 
         // append the number of users per skill
         if ( skill_stat < 10 ) {
-          string_array[i] += '( ' + skill_stat + ') ';
-        }
-        else {
-          string_array[i] += '(' + skill_stat + ') ';
+            string_array[i] += '( ' + skill_stat + ') ';
+        } else {
+            string_array[i] += '(' + skill_stat + ') ';
         }
     }
-    return string_array;   
+    return string_array;
 }
 
 /* generate a Slack response histogram
@@ -161,20 +172,20 @@ function paddedArray(skill_obj) {
  * @params    [string]   output   [string-formatted histogram]
  * @returns   [object]            [Slack response]
 */
-function formatResponse(team_name, output) {
+function formatResponse(team_name, output, count) {
     let okColor = '#008080',
         data    = {
             'response_type' : 'ephemeral',
             'attachments'   : [
                 {
-                    'color' : okColor,
-                    'fields': [
+                    'color'  : okColor,
+                    'fields' : [
                         {
-                            'title' : `Skill Statistics for: ${team_name}`,
+                            'title' : `Top ${count} Skills for: ${team_name}`,
                             'value' : '```' + output + '```',
                             'short' : false
                         }
-                    ],                
+                    ],
                     'mrkdwn_in' : ['text', 'fields']
                 }
             ]
