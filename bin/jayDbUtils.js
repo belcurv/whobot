@@ -53,7 +53,10 @@ function normalizeSkills(skills) {
 }
 
 
-/* update stats with changed profile info
+/* update _stats with changed profile info
+ *
+ * @params    [object]   data   [original and updated profiles arrays]
+ * @returns   [object]          [same input object]
 */
 function doStatistics(data) {
     
@@ -119,6 +122,16 @@ function diffSkills(a, b) {
 }
 
 
+/* update profiles in database ## TO-DO ##
+ *
+ * @params    [object]   data   [original and updated profiles arrays]
+ * @returns   [object]          [same input object]
+*/
+function updateDatabase(data) {
+    return data;
+}
+
+
 /* rebuild profiles with normalized skills
  *
  * @params    [array]   profiles   [original input profiles]
@@ -152,7 +165,7 @@ function repopulateSkills() {
     getAllUsers()
         .then(rebuildProfiles)
         .then(doStatistics)
-//        .then(updateDatabase)  // to-do
+        .then(updateDatabase)
         .then(logDump);
 }
 
