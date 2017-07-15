@@ -2,7 +2,11 @@
 /* jshint node: true, esversion:6 */
 
 var BotFunctions = require('./botFunctions.js'),
-    dbUtils      = require('./dbUtils.js');
+    dbUtils      = require('./dbUtils.js'),
+    jdbUtils     = require('./jayDbUtils.js');
+
+// for dev/testing, just logs to terminal console
+jdbUtils();
 
 module.exports = function (req, res, next) {
     

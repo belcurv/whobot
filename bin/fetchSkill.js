@@ -10,6 +10,7 @@
 const skills     = require('./dataDictionary');
 const dictionary = flattenDictionary(skills);
 
+
 /* =============================== utilities =============================== */
 
 /* flattens the 2d skills dictionary
