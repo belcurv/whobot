@@ -34,12 +34,16 @@ function getAllUsers() {
 }
 
 
-/* logging
+/* deduplicate skills array
+ *
+ * @params    [array]   skills   [original skills array]
+ * @returns   [array]            [de-duped skills array]
 */
-function logDump(data) {
-    console.log('\n=============== Whobot DB Utils Stats ===============');
-    console.log(`Number of Profiles Updated: ${_stats.update_count} of ${data.profiles.length}`);
-    console.log(`Changes: ${_stats.updated_profiles.map( p => '\n' + p.name + '\n   ' + p.skills.join('\n   ')).join('\n')}`);
+function dedupeSkills(skills) {
+    var seen = {};
+    
+    return skills
+        .filter( (i) => seen.hasOwnProperty(i) ? false : (seen[i] = true) );
 }
 
 
@@ -50,34 +54,6 @@ function logDump(data) {
 */
 function normalizeSkills(skills) {
     return skills.map ( orig_s => fetchSkill(orig_s));
-}
-
-
-/* update _stats with changed profile info
- *
- * @params    [object]   data   [original and updated profiles arrays]
- * @returns   [object]          [same input object]
-*/
-function doStatistics(data) {
-    
-    // compare old and new profiles
-    for (let i = 0; i < data.profiles.length; i += 1) {
-
-        if (!profilesAreEqual(data.profiles[i], data.updated[i])) {
-            
-            // push profile name to list of updated profiles
-            _stats.updated_profiles.push({
-                name   : data.profiles[i].name,
-                skills : diffSkills(data.profiles[i], data.updated[i])
-            });
-            
-            // update private _stats.update_count
-            _stats.update_count += 1;
-        }
-    }
-    
-    return data;
-    
 }
 
 
@@ -122,15 +98,7 @@ function diffSkills(a, b) {
 }
 
 
-/* update profiles in database ## TO-DO ##
- *
- * @params    [object]   data   [original and updated profiles arrays]
- * @returns   [object]          [same input object]
-*/
-function updateDatabase(data) {
-    return data;
-}
-
+/* ============================ private methods ============================ */
 
 /* rebuild profiles with normalized skills
  *
@@ -156,6 +124,99 @@ function rebuildProfiles(profiles) {
         updated
     };
         
+}
+
+
+/* update _stats with changed profile info
+ *
+ * @params    [object]   data   [original and updated profiles arrays]
+ * @returns   [object]          [same input object]
+*/
+function doStatistics(data) {
+    
+    // compare old and new profiles
+    for (let i = 0; i < data.profiles.length; i += 1) {
+
+        if (!profilesAreEqual(data.profiles[i], data.updated[i])) {
+            
+            // push profile name to list of updated profiles
+            _stats.updated_profiles.push({
+                name   : data.profiles[i].name,
+                skills : diffSkills(data.profiles[i], data.updated[i])
+            });
+            
+            // update private _stats.update_count
+            _stats.update_count += 1;
+        }
+    }
+    
+    return data;
+    
+}
+
+
+/* update profiles in database ## TO-DO ##
+ *
+ * @params    [object]   data   [original and updated profiles arrays]
+ * @returns   [object]          [same input object]
+*/
+function updateDatabase(data) {
+    
+    // array of promises populated by the forEach loop
+    const promiseList = [];
+    
+    // for each updated profile, query and update db record
+    data.updated.forEach( profile => {
+        
+        // target profile with user's team ID and user ID
+        const  user = {
+            team_id: profile.team_id,
+            user_id: profile.user_id
+        };
+        
+        // for each updated profile, find and update their db record.
+        // Each query is wrapped in a promise and pushed to 'promiseList'.
+        promiseList.push( new Promise( resolve => {
+            return Profiles
+                .findOne(user)
+                .exec()
+                .then( (p) =>  {
+
+                    // rebuild profile text property from updated skills
+                    let newText   = `${(profile.skills).join(', ')}`,
+
+                        // deduplicate profile skills before saving
+                        newSkills = dedupeSkills(profile.skills);
+
+                    // update profile's properties
+                    p.postText = newText;
+                    p.skills   = newSkills;
+
+                    // save the updated profile
+                    p.save( (err) => {
+                        if (err) throw err;
+                    });
+                
+                    // push `p` to `promiseList`
+                    resolve(p);
+
+                });
+        }));
+    });
+    
+    // resolve all promises in `promiseList` before returning.
+    // Need to return to keep the promise chain rolling.
+    return Promise.all(promiseList);
+    
+}
+
+
+/* logging
+*/
+function logDump(data) {
+    console.log('\n=============== Whobot DB Utils Stats ===============');
+    console.log(`Number of Profiles Updated: ${_stats.update_count} of ${data.length}`);
+    console.log(`Changes: ${_stats.updated_profiles.map( p => '\n' + p.name + '\n   ' + p.skills.join('\n   ')).join('\n')}`);
 }
 
 
