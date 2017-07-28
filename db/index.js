@@ -8,8 +8,7 @@ module.exports = {
     
     getDbConnectionString: function() {
         
-        //return `mongodb://${uname}:${pwd}@ds127260.mlab.com:27260/whobot`;
-        return `mongodb://${uname}:${pwd}@ds143362.mlab.com:43362/whobot-dev`;
+        return `mongodb://${uname}:${pwd}@ds127260.mlab.com:27260/whobot`;
         
     }
     

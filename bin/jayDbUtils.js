@@ -53,7 +53,7 @@ function dedupeSkills(skills) {
  * @returns   [array]            [normalized skills]
 */
 function normalizeSkills(skills) {
-    return skills.map ( orig_s => fetchSkill(orig_s));
+    return skills.map( orig_s => fetchSkill(orig_s) );
 }
 
 
@@ -189,7 +189,7 @@ function updateDatabase(data) {
                         newSkills = dedupeSkills(profile.skills);
 
                     // update profile's properties
-                    p.postText = newText;
+//                    p.postText = newText;
                     p.skills   = newSkills;
 
                     // save the updated profile
