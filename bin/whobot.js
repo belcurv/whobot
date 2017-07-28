@@ -1,8 +1,10 @@
 /* bin/whobot.js */
 /* jshint node: true, esversion:6 */
 
-var BotFunctions = require('./botFunctions.js'),
-    dbUtils      = require('./dbUtils.js');
+const BotFunctions = require('./botFunctions.js'),
+      dbUtils      = require('./dbUtils.js');
+
+const jdbUtils     = require('./jayDbUtils.js')(); // for dev/testing
 
 module.exports = function (req, res, next) {
     
@@ -12,7 +14,7 @@ module.exports = function (req, res, next) {
     }
     
     // assemble info from Slack POST
-    var postBody = {
+    const postBody = {
         team_id      : req.body.team_id,
         team_domain  : req.body.team_domain,
         channel_id   : req.body.channel_id,
@@ -45,7 +47,6 @@ module.exports = function (req, res, next) {
             postBody.postText = req.body.text.substring(7);
             BotFunctions.iKnow(postBody, res);
             break;
-
         
         case /^forget me/gi.test(postBody.postText):
             // delete user's profile from database
