@@ -34,17 +34,29 @@ describe('Bot Functions', () => {
 
     it('should fetch a god damn profile', () => {
       let expected_models = sample_profiles;
-      let res = sinon.spy();
+      // let status = sinon.mock();
+      // let send = sinon.mock();
+      let res = {
+        status : (function() {}),
+        send : (function() {})
+      };
+      sinon.spy(res, 'status');
+      sinon.spy(res, 'send');
+      // let postBody = sinon.spy();
       let mockPostBody = {
         user_id : 'dummy',
         user_name : 'dummy',
         team_id : 'dummy',
         postText : '<@U5YUAK7K5|mmadden>'
       }
-      Profile.findOne.yields(expected_models[1]);
+      // Profile.findOne.yields(expected_models[1]);
+      Profile.findOne.returns(Promise.resolve());
 
       botFun.whoIs(mockPostBody, res);
-      sinon.assert.calledWith(res, 'attachments');
+      sinon.assert.calledOnce(res.status);
+      sinon.assert.calledOnce(res.send);
+      // sinon.assert.calledWith(res.status);
+      // sinon.assert.calledWith(res.send);
       
     });
   // it('fetchAllProfiles should fetch all the profiles',  () => {
