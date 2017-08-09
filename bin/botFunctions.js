@@ -513,6 +513,22 @@ function deleteSkill(postBody, res) {
     
 }
 
+/*__________________________ Bogus function to test __________________________*/
+
+function testGetOneProfile(user_id, res) {
+  Profiles
+    .findOne(user_id)
+    .exec()
+    .then( (profile) =>  {
+      let name   = profile.user_name,
+        skills = profile.skills.join('\n'),
+        data   = { 'name': name, 'skills': skills };
+      return res
+        .status(200)
+        .send(data);
+    })
+    .catch( (err) => console.log('Error:', err));
+}
 
 /* =========================== expose public api =========================== */
 
@@ -523,6 +539,7 @@ module.exports = {
     whoKnows    : getMatchingProfiles,
     iKnow       : addProfile,
     forgetMe    : deleteProfile,
-    forgetSkill : deleteSkill
+    forgetSkill : deleteSkill,
+    testGetOneProfile : testGetOneProfile
     
 };
