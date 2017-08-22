@@ -521,8 +521,11 @@ function testGetOneProfile(user_id, res) {
     .exec()
     .then( (profile) =>  {
       let name   = profile.user_name,
-        skills = profile.skills.join('\n'),
-        data   = { 'name': name, 'skills': skills };
+          skills = profile.skills.join('\n'),
+          data   = { 'name': name, 'skills': skills };
+      console.log('============= BEFORE');
+      console.log(res.status(200));
+      console.log('============= AFTER');
       return res
         .status(200)
         .send(data);
@@ -530,6 +533,35 @@ function testGetOneProfile(user_id, res) {
     .catch( (err) => console.log('Error:', err));
 }
 
+function fetchWithCallback(user_id, callback, res) {
+  Profiles.findOne({ user_id : user_id }, (err, profile) => {
+    if (err) throw err;
+    callback(profile, res);
+  });
+}
+
+function conditionTheFetch(profile, res) {
+  let name   = profile.user_name,
+      skills = profile.skills.join('\n'),
+      data   = { 'name': name, 'skills': skills };
+  return res
+    .status(200)
+    .send(data);
+}
+
+
+function _fetchWithCallback(user_id, res) {
+  Profiles.findOne({ user_id : user_id }, (err, profile) => {
+    if (err) throw err;
+    let name   = profile.user_name,
+        skills = profile.skills.join('\n'),
+        data   = { 'name': name, 'skills': skills };
+        // console.log(data);
+    // res(data);
+    // res.send(name);
+    res.status(200).send(data);
+  });
+}
 /* =========================== expose public api =========================== */
 
 module.exports = {
@@ -540,6 +572,9 @@ module.exports = {
     iKnow       : addProfile,
     forgetMe    : deleteProfile,
     forgetSkill : deleteSkill,
-    testGetOneProfile : testGetOneProfile
+    testGetOneProfile : testGetOneProfile,
+    fetchWithCallback : fetchWithCallback,
+    conditionTheFetch : conditionTheFetch,
+    _fetchWithCallback : _fetchWithCallback
     
 };
