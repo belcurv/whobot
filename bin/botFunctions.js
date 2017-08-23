@@ -524,7 +524,7 @@ function testGetOneProfile(user_id, res) {
           skills = profile.skills.join('\n'),
           data   = { 'name': name, 'skills': skills };
       console.log('============= BEFORE');
-      console.log(res.status(200));
+      console.log(res);
       console.log('============= AFTER');
       return res
         .status(200)
